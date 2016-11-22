@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.qurux.coffeevizbeer.ui.LoginActivity">
+
+    <ImageView
+        android:id="@+id/imageView_login_logo"
+        android:layout_width="@dimen/app_logo_size"
+        android:layout_height="@dimen/app_logo_size"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/login_logo_top_margin"
+        android:contentDescription="@string/desc_cvb_logo"
+        app:srcCompat="@drawable/ic_vector_cvb_icon" />
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/text_login_title"
+        style="@style/CustomStrongFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView_login_logo"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="@string/app_name"
+        android:textSize="60sp"
+        autofit:minTextSize="24sp" />
+
+    <View
+        android:id="@+id/center_login"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true" />
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/text_login_subtitle"
+        style="@style/TextAppearance.AppCompat.grey.light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_login_title"
+        android:layout_marginLeft="@dimen/negative_margin"
+        android:layout_marginStart="@dimen/negative_margin"
+        android:layout_toEndOf="@id/center_login"
+        android:layout_toRightOf="@id/center_login"
+        android:gravity="end"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="@string/app_subtitle"
+        android:textSize="50sp"
+        autofit:minTextSize="12sp" />
+
+    <RelativeLayout
+        android:id="@+id/login_message_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/text_login_subtitle"
+        android:layout_marginBottom="@dimen/negative_vertical_margin"
+        android:layout_marginTop="@dimen/login_logo_top_margin"
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:gravity="center">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/login_logo_top_margin"
+            android:padding="8dp"
+            app:buttonSize="wide" />
+
+        <ProgressBar
+            android:id="@+id/login_loader"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/sign_in_button"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorPrimaryDark"
+            android:visibility="invisible" />
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/login_error_text"
+            style="@style/TextAppearance.AppCompat.grey.light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_loader"
+            android:gravity="center"
+            android:text="@string/default_loading_text"
+            android:textSize="20sp"
+            android:visibility="invisible"
+            app:minTextSize="12sp"
+            app:sizeToFit="true" />
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.grey.extraLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:text="@string/app_made_by"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</RelativeLayout>

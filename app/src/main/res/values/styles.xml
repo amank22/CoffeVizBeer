@@ -1,0 +1,63 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="CustomStrongFont">
+        <item name="fontPath">fonts/CharisSILB.ttf</item>
+    </style>
+
+    <style name="CustomNormalFont">
+        <item name="fontPath">fonts/CharisSILR.ttf</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.grey">
+        <item name="android:textColor">@color/colorTextGrey</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.grey.light">
+        <item name="android:textColor">@color/colorTextGreyLight</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.grey.extraLight">
+        <item name="android:textColor">@color/colorTextGreyExtraLight</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.grey.extraLight.strongFont">
+        <item name="android:textColor">@color/colorTextGreyExtraLight</item>
+        <item name="fontPath">fonts/CharisSILB.ttf</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="textViewWithDefaultMargin">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="CustomStrongFont.textViewWithDefaultMargin">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="textViewWithPadding">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+</resources>

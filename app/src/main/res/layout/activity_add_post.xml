@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.qurux.coffeevizbeer.ui.AddPostActivity">
+
+    <RelativeLayout
+        android:id="@+id/activity_add_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <ImageView
+            android:id="@+id/app_icon_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/app_logo_size_small"
+            android:contentDescription="@string/app_name"
+            android:focusableInTouchMode="true"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_vector_cvb_icon" />
+
+        <TextView
+            android:id="@+id/add_new_post_text"
+            style="@style/textViewWithPadding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_icon_top"
+            android:background="@color/colorWhite"
+            android:focusableInTouchMode="true"
+            android:paddingBottom="@dimen/keyline_margin"
+            android:paddingTop="@dimen/keyline_margin"
+            android:text="@string/new_post_hint_text" />
+
+        <LinearLayout
+            android:id="@+id/preview_post_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_new_post_text"
+            android:layout_marginTop="@dimen/text_margin_half"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
+
+            <com.qurux.coffeevizbeer.helper.ThisThatView
+                android:id="@+id/this_that_view_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/post_this_that_image_height"
+                android:background="@color/colorTextGrey"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin" />
+
+            <RelativeLayout
+                android:id="@+id/title_layout_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorTextGrey">
+
+                <TextView
+                    android:id="@+id/post_item_title_viz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:maxLines="1"
+                    android:text="@string/viz"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/textSize_large" />
+
+                <EditText
+                    android:id="@+id/post_item_title_this"
+                    style="@style/textViewWithPadding"
+                    android:layout_toLeftOf="@id/post_item_title_viz"
+                    android:layout_toStartOf="@id/post_item_title_viz"
+                    android:background="@null"
+                    android:gravity="end"
+                    android:hint="@string/post_title_hint_this"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorAccent"
+                    android:textSize="@dimen/textSize_large" />
+
+                <EditText
+                    android:id="@+id/post_item_title_that"
+                    style="@style/textViewWithPadding"
+                    android:layout_toEndOf="@id/post_item_title_viz"
+                    android:layout_toRightOf="@id/post_item_title_viz"
+                    android:background="@null"
+                    android:gravity="start"
+                    android:hint="@string/post_title_hint_that"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorAccent"
+                    android:textSize="@dimen/textSize_large" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_margin">
+                <!--Set user icon drawable to left to text programmatically because of vector icon using support library-->
+                <TextView
+                    android:id="@+id/post_item_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:drawablePadding="@dimen/text_margin_half"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/textSize_normal"
+                    tools:text="Aman Kapoor" />
+
+                <TextView
+                    android:id="@+id/post_item_remove_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/textSize_normal" />
+            </LinearLayout>
+
+            <me.grantland.widget.AutofitLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/post_item_summary"
+                    style="@style/textViewWithDefaultMargin"
+                    android:layout_marginBottom="@dimen/text_margin_half"
+                    android:layout_marginTop="@dimen/keyline_margin"
+                    android:background="@null"
+                    android:gravity="top"
+                    android:hint="@string/hint_post_summary"
+                    android:maxLength="160"
+                    android:maxLines="4"
+                    android:textColor="@color/colorTextGrey"
+                    android:textColorHint="@color/colorTextGrey"
+                    android:textSize="@dimen/textSize_normal"
+                    autofit:minTextSize="10sp" />
+            </me.grantland.widget.AutofitLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/colorBackground" />
+
+            <TextView
+                android:id="@+id/post_item_read_more"
+                style="@style/textViewWithDefaultMargin"
+                android:layout_marginBottom="@dimen/text_margin_half"
+                android:layout_marginTop="@dimen/text_margin_half"
+                android:text="@string/add_description"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/textSize_normal" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_submit_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/preview_post_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:background="@drawable/button_bg"
+            android:paddingLeft="@dimen/text_margin"
+            android:paddingRight="@dimen/text_margin"
+            android:text="@string/button_submit"
+            android:textColor="@color/colorWhite" />
+    </RelativeLayout>
+</ScrollView>
