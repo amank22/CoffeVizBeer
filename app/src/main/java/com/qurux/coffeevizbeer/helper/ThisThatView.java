@@ -81,6 +81,13 @@ public class ThisThatView extends View {
                 .build();
         DraweeHolder<GenericDraweeHierarchy> thisDraweeHolder = DraweeHolder.create(gdh, getContext());
         DraweeHolder<GenericDraweeHierarchy> thatDraweeHolder = DraweeHolder.create(gdh2, getContext());
+        //Updated these callbacks
+        //Hopefully it will solve the fresco image issue.
+        //Need to see where we can remove this callback if there is any need somewhere
+        // When a holder is set to the view for the first time,
+        // don't forget to set the callback to its top-level drawable:
+        thisDraweeHolder.getTopLevelDrawable().setCallback(this);
+        thatDraweeHolder.getTopLevelDrawable().setCallback(this);
         mDraweeHolder = new MultiDraweeHolder<>();
         mDraweeHolder.add(thisDraweeHolder);
         mDraweeHolder.add(thatDraweeHolder);
@@ -145,7 +152,7 @@ public class ThisThatView extends View {
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setUri(links.get(i))
                     .setOldController(mDraweeHolder.get(i).getController())
-                    .setContentDescription("Post Image " + i)
+                    .setContentDescription("Vizo Image " + i)
                     .build();
             mDraweeHolder.get(i).setController(controller);
         }
@@ -159,7 +166,7 @@ public class ThisThatView extends View {
             builder.reset();
             builder.setUri(links[i])
                     .setOldController(mDraweeHolder.get(i).getController())
-                    .setContentDescription("Post Image " + i);
+                    .setContentDescription("Vizo Image " + i);
             mDraweeHolder.get(i).setController(builder.build());
         }
     }
