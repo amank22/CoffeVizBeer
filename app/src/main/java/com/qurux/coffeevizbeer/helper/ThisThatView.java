@@ -39,6 +39,7 @@ public class ThisThatView extends View {
     private static final int desiredWidth = 300;
     private static final int desiredHeight = 200;
     private MultiDraweeHolder<GenericDraweeHierarchy> mDraweeHolder;
+    private PipelineDraweeControllerBuilder builder;
     private int overlapWidth = 20;
     private String TAG = "ThisThatView";
 
@@ -62,8 +63,6 @@ public class ThisThatView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
-
-    PipelineDraweeControllerBuilder builder;
 
     private void init() {
         builder = Fresco.newDraweeControllerBuilder();
@@ -103,10 +102,10 @@ public class ThisThatView extends View {
             midWidth = (getMeasuredWidth() - getPaddingRight() - getPaddingLeft()) / 2;
         }
         int height = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-//        Log.d(TAG, "onDraw: " + height + ":" + midWidth);
         for (int i = 0; i < mDraweeHolder.size(); i++) {
             Drawable drawable = mDraweeHolder.get(i).getTopLevelDrawable();
             int shift;
+            //Checking if drawee should go to left or right according to odd-even position
             if ((i + 1) % 2 == 0) {
                 shift = -overlapWidth + (i / 2) * height;
                 drawable.setBounds(midWidth + shift, getPaddingTop(), midWidth + shift + height, height + getPaddingTop());
@@ -114,7 +113,6 @@ public class ThisThatView extends View {
                 shift = overlapWidth - (i / 2) * height;
                 drawable.setBounds(midWidth + shift - height, getPaddingTop(), midWidth + shift, height + getPaddingTop());
             }
-//            Log.d(TAG, "onDraw: " + drawable.getBounds());
             drawable.draw(canvas);
         }
     }
@@ -133,7 +131,6 @@ public class ThisThatView extends View {
         setMeasuredDimension(widthSize, heightSize);
     }
 
-    //TODO: this is a tricky one.Need to see it later. Maybe this is ok.
     @Override
     protected boolean verifyDrawable(@NonNull Drawable who) {
         return mDraweeHolder.verifyDrawable(who) || super.verifyDrawable(who);
@@ -142,6 +139,11 @@ public class ThisThatView extends View {
     @Override
     public void invalidateDrawable(@NonNull Drawable drawable) {
         invalidate();
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mDraweeHolder.onTouchEvent(event) || super.onTouchEvent(event);
     }
 
     public void setImageToAllImages(List<String> links) throws Exception {
