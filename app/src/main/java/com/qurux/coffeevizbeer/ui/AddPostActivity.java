@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.helper.ThisThatView;
 
@@ -27,6 +29,8 @@ public class AddPostActivity extends BaseActivity {
         //Hides the soft keyboard on activity start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initViews();
+        String user=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        author.setText(user);
 
     }
 
