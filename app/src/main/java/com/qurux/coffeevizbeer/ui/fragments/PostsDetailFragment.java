@@ -90,7 +90,6 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         bookmark = (ImageButton) v.findViewById(R.id.button_bookmark);
         share = (ImageButton) v.findViewById(R.id.button_share);
         thisThatView = (ThisThatView) v.findViewById(R.id.this_that_view_item);
-        //TODO: Add clicks to buttons
     }
 
     @Override
@@ -110,6 +109,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         String descriptionText = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_DESCRIPTION));
         String linkThisString = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LINK_THIS));
         String linkThatString = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LINK_THAT));
+        String color = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_COLOR));
         likedInt = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LIKED));
         bookmarkedInt = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_BOOKMARKED));
         serverIdText = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SERVER_ID));
@@ -124,6 +124,9 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         } catch (Exception e) {
             e.printStackTrace();
         }
+        thisThatView.setBackgroundColor(Color.parseColor(color));
+        title.setBackgroundColor(Color.parseColor(color));
+        date.setBackgroundColor(Color.parseColor(color));
         if (bookmarkedInt == 0)
             bookmark.setImageResource(R.drawable.ic_vector_bookmark_black);
         else if (bookmarkedInt == 1)
