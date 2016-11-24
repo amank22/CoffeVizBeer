@@ -3,29 +3,22 @@ package com.qurux.coffeevizbeer.helper;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.DraweeHolder;
 import com.facebook.drawee.view.MultiDraweeHolder;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
 import com.qurux.coffeevizbeer.R;
 
 import java.util.List;
@@ -38,10 +31,12 @@ public class ThisThatView extends View {
 
     private static final int desiredWidth = 300;
     private static final int desiredHeight = 200;
+    GestureDetector gestureDetector;
     private MultiDraweeHolder<GenericDraweeHierarchy> mDraweeHolder;
     private PipelineDraweeControllerBuilder builder;
     private int overlapWidth = 20;
     private String TAG = "ThisThatView";
+    private OnClickListenerForThisThat clickListener;
 
     public ThisThatView(Context context) {
         super(context);
@@ -140,10 +135,17 @@ public class ThisThatView extends View {
     public void invalidateDrawable(@NonNull Drawable drawable) {
         invalidate();
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
         return mDraweeHolder.onTouchEvent(event) || super.onTouchEvent(event);
+    }
+
+    public void setClickListenerForThisThat(OnClickListenerForThisThat listener) {
+        clickListener = listener;
+        DraweeGestureDetector cgestureDetector = new DraweeGestureDetector();
+        gestureDetector = new GestureDetector(getContext(), cgestureDetector);
     }
 
     public void setImageToAllImages(List<String> links) throws Exception {
@@ -151,12 +153,7 @@ public class ThisThatView extends View {
             throw new Exception("Size of links and drawables does not match");
         }
         for (int i = 0; i < links.size(); i++) {
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setUri(links.get(i))
-                    .setOldController(mDraweeHolder.get(i).getController())
-                    .setContentDescription("Vizo Image " + i)
-                    .build();
-            mDraweeHolder.get(i).setController(controller);
+            setImage(i, links.get(i));
         }
     }
 
@@ -165,12 +162,28 @@ public class ThisThatView extends View {
             throw new Exception("Size of links and drawables does not match");
         }
         for (int i = 0; i < links.length; i++) {
-            builder.reset();
-            builder.setUri(links[i])
-                    .setOldController(mDraweeHolder.get(i).getController())
-                    .setContentDescription("Vizo Image " + i);
-            mDraweeHolder.get(i).setController(builder.build());
+            setImage(i, links[i]);
         }
+    }
+
+    public void setImage(int position, String link) {
+        builder.reset();
+        builder.setUri(link)
+                .setOldController(mDraweeHolder.get(position).getController())
+                .setContentDescription("Vizo Image " + position);
+        mDraweeHolder.get(position).setController(builder.build());
+    }
+
+    public int getOverlapWidth() {
+        return overlapWidth;
+    }
+
+    public void setOverlapWidth(int overlapWidth) {
+        this.overlapWidth = overlapWidth;
+    }
+
+    public Drawable getDrawableAtPosition(int position) {
+        return mDraweeHolder.get(position).getTopLevelDrawable();
     }
 
     @Override
@@ -195,6 +208,30 @@ public class ThisThatView extends View {
     public void onFinishTemporaryDetach() {
         super.onFinishTemporaryDetach();
         mDraweeHolder.onAttach();
+    }
+
+    public interface OnClickListenerForThisThat {
+        void onThisClicked();
+
+        void onThatClicked();
+    }
+
+    private class DraweeGestureDetector extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            if (mDraweeHolder.get(1).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
+                clickListener.onThatClicked();
+            } else if (mDraweeHolder.get(0).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
+                clickListener.onThisClicked();
+            }
+            super.onShowPress(e);
+        }
     }
 
 }

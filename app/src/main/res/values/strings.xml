@@ -117,5 +117,7 @@
     <string name="add_description">ADD DESCRIPTION</string>
     <string name="button_submit">Post your vizo</string>
     <string name="viz" translatable="false">viz</string>
+    <string name="choose_a_photo">Choose a photo</string>
+    <string name="choose_an_avatar">Choose an avatar</string>
 
 </resources>
