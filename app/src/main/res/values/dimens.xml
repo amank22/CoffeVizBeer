@@ -14,5 +14,6 @@
     <dimen name="post_this_that_image_height">120dp</dimen>
     <dimen name="textSize_large">20sp</dimen>
     <dimen name="textSize_normal">16sp</dimen>
+    <dimen name="textSize_small">12sp</dimen>
     <dimen name="keyline_margin">4dp</dimen>
 </resources>

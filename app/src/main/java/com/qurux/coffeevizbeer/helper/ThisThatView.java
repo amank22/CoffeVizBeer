@@ -31,7 +31,7 @@ public class ThisThatView extends View {
 
     private static final int desiredWidth = 300;
     private static final int desiredHeight = 200;
-    GestureDetector gestureDetector;
+    private GestureDetector gestureDetector;
     private MultiDraweeHolder<GenericDraweeHierarchy> mDraweeHolder;
     private PipelineDraweeControllerBuilder builder;
     private int overlapWidth = 20;
@@ -61,6 +61,7 @@ public class ThisThatView extends View {
 
     private void init() {
         builder = Fresco.newDraweeControllerBuilder();
+        //TODO: Add custom xml attributes
         GenericDraweeHierarchy gdh = new GenericDraweeHierarchyBuilder(getResources())
                 .setRoundingParams(RoundingParams.asCircle())
                 .setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP)
@@ -138,7 +139,7 @@ public class ThisThatView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(clickListener!=null)
+        if (clickListener != null)
             return gestureDetector.onTouchEvent(event);
         else
             return mDraweeHolder.onTouchEvent(event) || super.onTouchEvent(event);
@@ -224,9 +225,9 @@ public class ThisThatView extends View {
         public boolean onDown(MotionEvent e) {
             return true;
         }
-        
+
         @Override
-        public boolean onSingleTapConfirmed(MotionEvent event) {
+        public boolean onSingleTapConfirmed(MotionEvent e) {
             if (mDraweeHolder.get(1).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
                 clickListener.onThatClicked();
                 return true;
@@ -237,15 +238,6 @@ public class ThisThatView extends View {
             return false;
         }
 
-        @Override
-        public void onShowPress(MotionEvent e) {
-            if (mDraweeHolder.get(1).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
-                clickListener.onThatClicked();
-            } else if (mDraweeHolder.get(0).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
-                clickListener.onThisClicked();
-            }
-            super.onShowPress(e);
-        }
     }
 
 }

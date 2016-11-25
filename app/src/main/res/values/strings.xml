@@ -117,7 +117,10 @@
     <string name="add_description">ADD DESCRIPTION</string>
     <string name="button_submit">Post your vizo</string>
     <string name="viz" translatable="false">viz</string>
-    <string name="choose_a_photo">Choose a photo</string>
-    <string name="choose_an_avatar">Choose an avatar</string>
+    <string name="click_a_photo">Click</string>
+    <string name="choose_an_avatar">Avatar</string>
+    <string name="choose_from_gallery">Gallery</string>
+    <string name="allow_camera">You need to allow camera usage.\nYou can update permission manually from Appinfo.</string>
+    <string name="camera_perm_denied">You did not allow camera usage :(</string>
 
 </resources>
