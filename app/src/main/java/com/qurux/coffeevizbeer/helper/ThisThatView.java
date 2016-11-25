@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -172,6 +173,14 @@ public class ThisThatView extends View {
     public void setImage(int position, String link) {
         builder.reset();
         builder.setUri(link)
+                .setOldController(mDraweeHolder.get(position).getController())
+                .setContentDescription("Vizo Image " + position);
+        mDraweeHolder.get(position).setController(builder.build());
+    }
+
+    public void setImage(int position, Uri uri) {
+        builder.reset();
+        builder.setUri(uri)
                 .setOldController(mDraweeHolder.get(position).getController())
                 .setContentDescription("Vizo Image " + position);
         mDraweeHolder.get(position).setController(builder.build());

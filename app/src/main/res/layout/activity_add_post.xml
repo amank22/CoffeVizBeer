@@ -29,11 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_icon_top"
-            android:background="@color/colorWhite"
             android:focusableInTouchMode="true"
+            android:gravity="center"
             android:paddingBottom="@dimen/keyline_margin"
             android:paddingTop="@dimen/keyline_margin"
-            android:text="@string/new_post_hint_text" />
+            android:text="@string/new_post_hint_text"
+            android:textSize="@dimen/textSize_small" />
 
         <LinearLayout
             android:id="@+id/preview_post_layout"
@@ -42,13 +43,14 @@
             android:layout_below="@id/add_new_post_text"
             android:layout_marginTop="@dimen/text_margin_half"
             android:background="@color/colorWhite"
+            android:elevation="3dp"
             android:orientation="vertical">
 
             <com.qurux.coffeevizbeer.helper.ThisThatView
                 android:id="@+id/this_that_view_item"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/post_this_that_image_height"
-                android:background="@color/colorTextGrey"
+                android:background="@color/colorPrimary"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingTop="@dimen/activity_vertical_margin" />
 
@@ -56,7 +58,7 @@
                 android:id="@+id/title_layout_add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorTextGrey">
+                android:background="@color/colorPrimary">
 
                 <TextView
                     android:id="@+id/post_item_title_viz"
@@ -99,27 +101,29 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/keyline_margin">
+                android:layout_height="wrap_content">
                 <!--Set user icon drawable to left to text programmatically because of vector icon using support library-->
                 <TextView
                     android:id="@+id/post_item_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/text_margin_half"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/text_margin_half"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:drawablePadding="@dimen/text_margin_half"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/textSize_normal"
                     tools:text="Aman Kapoor" />
 
-                <TextView
+                <Button
                     android:id="@+id/post_item_remove_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
                     android:text="@string/remove"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/textSize_normal" />
+                    android:textSize="@dimen/textSize_small" />
             </LinearLayout>
 
             <me.grantland.widget.AutofitLayout
@@ -130,7 +134,6 @@
                     android:id="@+id/post_item_summary"
                     style="@style/textViewWithDefaultMargin"
                     android:layout_marginBottom="@dimen/text_margin_half"
-                    android:layout_marginTop="@dimen/keyline_margin"
                     android:background="@null"
                     android:gravity="top"
                     android:hint="@string/hint_post_summary"

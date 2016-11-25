@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -45,15 +45,16 @@ public class AddPostActivity extends BaseActivity {
     protected static final int CAMERA_REQUEST = 0;
     protected static final int GALLERY_PICTURE = 1;
     private static final int MY_REQUEST_CODE = 4445;
+    private static final int MY_REQUEST_CODE_STORAGE = 4444;
     TextView titleThis, titleThat, author, remove, summary;
     TextView addDecp;
     ThisThatView thisThatView;
     Button submit;
     Bitmap bitmap;
+    ImageChooserDialog dialog;
     private Intent pictureActionIntent = null;
     private String selectedImagePath;
     private int position = ImageChooserDialog.OPTION_INVALID;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,9 @@ public class AddPostActivity extends BaseActivity {
         initViews();
         String user = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         author.setText(user);
-
+        SpannableString underlineRemove = new SpannableString(remove.getText());
+        underlineRemove.setSpan(new UnderlineSpan(), 0, remove.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        remove.setText(underlineRemove);
         thisThatView.setClickListenerForThisThat(new ThisThatView.OnClickListenerForThisThat() {
             @Override
             public void onThisClicked() {
@@ -75,6 +78,7 @@ public class AddPostActivity extends BaseActivity {
                 callDialog(ImageChooserDialog.OPTION_THAT);
             }
         });
+        checksStoragePermission();
     }
 
     @Override
@@ -102,7 +106,7 @@ public class AddPostActivity extends BaseActivity {
     private void callDialog(int position) {
         this.position = position;
         FragmentManager fm = getSupportFragmentManager();
-        ImageChooserDialog dialog = ImageChooserDialog.getInstance(position);
+        dialog = ImageChooserDialog.getInstance(position);
         dialog.show(fm, "fragment_image_chooser-" + position);
     }
 
@@ -177,23 +181,16 @@ public class AddPostActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         bitmap = null;
-        selectedImagePath = null;
 
-        if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
-
-            File f = new File(Environment.getExternalStorageDirectory().toString());
-            for (File temp : f.listFiles()) {
-                if (temp.getName().equals("temp.jpg")) {
-                    f = temp;
-                    break;
-                }
-            }
-            if (!f.exists()) {
+        if (requestCode == CAMERA_REQUEST) {
+            if (resultCode != RESULT_OK) {
+                File f = new File(selectedImagePath);
                 Toast.makeText(getBaseContext(), "Error while capturing image", Toast.LENGTH_LONG).show();
-                return;
+                f.delete();
+            } else {
+                File f = new File(selectedImagePath);
+                Log.d("aman", "onActivityResult: " + f.getTotalSpace() + ":" + f.getUsableSpace());
             }
-            selectedImagePath = f.getAbsolutePath();
-
         } else if (resultCode == RESULT_OK && requestCode == GALLERY_PICTURE) {
             if (data != null) {
 
@@ -208,48 +205,40 @@ public class AddPostActivity extends BaseActivity {
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 selectedImagePath = c.getString(columnIndex);
                 c.close();
-
-                if (selectedImagePath != null) {
-                    //Got the imagePath
-                }
-
             } else {
                 Toast.makeText(getApplicationContext(), "Cancelled",
                         Toast.LENGTH_SHORT).show();
             }
         }
-        Log.d("aman", "onActivityResult: " + selectedImagePath);
-    }
-
-    private void straightenBitmap(File f) {
-        bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-        bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
-        int rotate = 0;
-        try {
-            ExifInterface exif = new ExifInterface(f.getAbsolutePath());
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotate = 270;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotate = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotate = 90;
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (resultCode == RESULT_OK && selectedImagePath != null) {
+            dialog.dismiss();
+            Log.d("aman", "onActivityResult: " + selectedImagePath);
+            File file = new File(selectedImagePath);
+            Log.d("aman", "onActivityResult:File=" + file.getName());
+            thisThatView.setImage(position, "file://" + selectedImagePath);
         }
-        Matrix matrix = new Matrix();
-        matrix.postRotate(rotate);
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                bitmap.getHeight(), matrix, true);
     }
+
+    public void checksStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d("MyApp", "SDK >= 23");
+            if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_REQUEST_CODE_STORAGE);
+
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    showMessageOKCancel(getString(R.string.allow_storage),
+                            (dialog, which) -> ActivityCompat.requestPermissions(AddPostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    MY_REQUEST_CODE_STORAGE));
+                }
+            }
+        } else {
+            Log.d("MyApp", "Android < 6.0");
+        }
+    }
+
 
     public void checksCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
