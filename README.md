@@ -5,6 +5,8 @@ Coffee Viz Beer Android app source code.Licensed under Apache 2.0
 
 ##[Like us on Facebook](www.facebook.com/coffeevizbeer)
 
+![Coffee Viz Beer](/15069044_945563148914026_8773361373992254835_o.jpg)
+
 There are people and things that are so much different, so opposite in nature and people don’t
 really see them together but when they do come, they make a combination that others have
 never imagined.
