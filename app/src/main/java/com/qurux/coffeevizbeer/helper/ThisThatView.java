@@ -138,8 +138,10 @@ public class ThisThatView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
-        return mDraweeHolder.onTouchEvent(event) || super.onTouchEvent(event);
+        if(clickListener!=null)
+            return gestureDetector.onTouchEvent(event);
+        else
+            return mDraweeHolder.onTouchEvent(event) || super.onTouchEvent(event);
     }
 
     public void setClickListenerForThisThat(OnClickListenerForThisThat listener) {
@@ -221,6 +223,18 @@ public class ThisThatView extends View {
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
+        }
+        
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event) {
+            if (mDraweeHolder.get(1).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
+                clickListener.onThatClicked();
+                return true;
+            } else if (mDraweeHolder.get(0).getTopLevelDrawable().getBounds().contains((int) e.getX(), (int) e.getY())) {
+                clickListener.onThisClicked();
+                return true;
+            }
+            return false;
         }
 
         @Override
