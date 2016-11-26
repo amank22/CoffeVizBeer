@@ -13,15 +13,18 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +33,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.dialog.ImageChooserDialog;
 import com.qurux.coffeevizbeer.events.ImageChooserEvent;
-import com.qurux.coffeevizbeer.helper.ThisThatView;
+import com.qurux.coffeevizbeer.events.UploadFailEvent;
+import com.qurux.coffeevizbeer.events.UploadSuccessEvent;
+import com.qurux.coffeevizbeer.helper.CvBUtil;
+import com.qurux.coffeevizbeer.helper.UploadDataHelper;
+import com.qurux.coffeevizbeer.views.ThisThatView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -38,6 +45,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -49,13 +57,17 @@ public class AddPostActivity extends BaseActivity {
     protected static final int GALLERY_PICTURE = 1;
     private static final int MY_REQUEST_CODE = 4445;
     private static final int MY_REQUEST_CODE_STORAGE = 4444;
+    private static final String CONFIG_KEY_IMG = "config_change_images";
+    private static final String CONFIG_KEY_COLOR = "config_change_color";
+    private static final String CONFIG_KEY_ANONYMOUS = "config_change_anonym";
     RelativeLayout titleLayout;
-    private TextView titleThis, titleThat, author, remove, summary;
-    private TextView addDecp;
+    private EditText titleThis, titleThat, summary, desc;
+    private ImageButton remove;
+    private TextView author;
     private ThisThatView thisThatView;
-    private Button submit;
+    private Button submit, addDecp;
     private ImageChooserDialog dialog;
-    private String selectedImagePath;
+    private String selectedImagePath[] = new String[2];
     private int position = ImageChooserDialog.OPTION_INVALID;
     private boolean isAnonymous = false;
     private LineColorPicker colorPicker;
@@ -67,13 +79,26 @@ public class AddPostActivity extends BaseActivity {
         //Hides the soft keyboard on activity start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initViews();
+        if (savedInstanceState != null) {
+            selectedImagePath = savedInstanceState.getStringArray(CONFIG_KEY_IMG);
+            currentColor = savedInstanceState.getInt(CONFIG_KEY_COLOR, ContextCompat.getColor(this, R.color.colorPrimary));
+            isAnonymous = savedInstanceState.getBoolean(CONFIG_KEY_ANONYMOUS, false);
+            for (int i = 0; i < (selectedImagePath != null ? selectedImagePath.length : 0); i++) {
+                if (selectedImagePath[i] != null) {
+                    thisThatView.setImage(i, "file://" + selectedImagePath[i]);
+                }
+            }
+        } else {
+            currentColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        }
+        setBackgroundColor();
         String user = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         assert user != null;
         author.setText(user);
-        SpannableString underlineRemove = new SpannableString(remove.getText());
-        underlineRemove.setSpan(new UnderlineSpan(), 0, remove.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        remove.setText(underlineRemove);
-        setClickListeners(user);
+        SpannableString strikeThrough = new SpannableString(user);
+        strikeThrough.setSpan(new StrikethroughSpan(), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        checkAndSetUser(user, strikeThrough);
+        setClickListeners(user, strikeThrough);
         colorPicker.setOnColorChangedListener(i -> {
             currentColor = i;
             setBackgroundColor();
@@ -81,17 +106,10 @@ public class AddPostActivity extends BaseActivity {
         checksStoragePermission();
     }
 
-    private void setClickListeners(String user) {
-        SpannableString strikeThrough = new SpannableString(user);
-        strikeThrough.setSpan(new StrikethroughSpan(), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    private void setClickListeners(String user, SpannableString strikeThrough) {
         remove.setOnClickListener(view -> {
-            if (isAnonymous) {
-                isAnonymous = false;
-                author.setText(user);
-            } else {
-                isAnonymous = true;
-                author.setText(strikeThrough);
-            }
+            isAnonymous = !isAnonymous;
+            checkAndSetUser(user, strikeThrough);
         });
         thisThatView.setClickListenerForThisThat(new ThisThatView.OnClickListenerForThisThat() {
             @Override
@@ -104,6 +122,40 @@ public class AddPostActivity extends BaseActivity {
                 callDialog(ImageChooserDialog.OPTION_THAT);
             }
         });
+        addDecp.setOnClickListener(view -> desc.setVisibility(View.VISIBLE));
+        submit.setOnClickListener(view -> submitData());
+    }
+
+    private void submitData() {
+//        if (!verifyData()) {
+//            return;
+//        }
+        Bundle bundle = new Bundle();
+        String title = titleThis.getText() + " viz " + titleThat.getText();
+        bundle.putString(UploadDataHelper.KEY_TITLE, title);
+        bundle.putString(UploadDataHelper.KEY_SUMMARY, summary.getText().toString());
+        bundle.putString(UploadDataHelper.KEY_DESCRIPTION, desc.getText().toString());
+        bundle.putString(UploadDataHelper.KEY_COLOR, "#" + Integer.toHexString(currentColor));
+        bundle.putBoolean(UploadDataHelper.KEY_ANONYMOUS, isAnonymous);
+        bundle.putStringArray(UploadDataHelper.KEY_LINKS, selectedImagePath);
+        CvBUtil.log("Submitting Data");
+        Intent service = new Intent(this, UploadDataHelper.class);
+        service.putExtras(bundle);
+        UploadDataHelper.handleUpdateIntent(this, service);
+    }
+
+    private boolean verifyData() {
+        return false;
+    }
+
+    private void checkAndSetUser(String user, SpannableString strikeThrough) {
+        if (!isAnonymous) {
+            remove.setImageResource(R.drawable.ic_vector_remove_user);
+            author.setText(user);
+        } else {
+            remove.setImageResource(R.drawable.ic_vector_add_user);
+            author.setText(strikeThrough);
+        }
     }
 
     private void setBackgroundColor() {
@@ -112,24 +164,36 @@ public class AddPostActivity extends BaseActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArray(CONFIG_KEY_IMG, selectedImagePath);
+        outState.putInt(CONFIG_KEY_COLOR, currentColor);
+        outState.putBoolean(CONFIG_KEY_ANONYMOUS, isAnonymous);
+    }
+
+    @Override
     protected int getLayoutResource() {
         return R.layout.activity_add_post;
     }
 
     private void initViews() {
-        titleThis = (TextView) findViewById(R.id.post_item_title_this);
-        titleThat = (TextView) findViewById(R.id.post_item_title_that);
+        titleThis = (EditText) findViewById(R.id.post_item_title_this);
+        titleThat = (EditText) findViewById(R.id.post_item_title_that);
         titleLayout = (RelativeLayout) findViewById(R.id.title_layout_add);
         author = (TextView) findViewById(R.id.post_item_author);
-        remove = (TextView) findViewById(R.id.post_item_remove_author);
-        summary = (TextView) findViewById(R.id.post_item_summary);
-        addDecp = (TextView) findViewById(R.id.post_item_read_more);
+        desc = (EditText) findViewById(R.id.post_editText_description);
+        remove = (ImageButton) findViewById(R.id.post_item_remove_author);
+        summary = (EditText) findViewById(R.id.post_item_summary);
+        addDecp = (Button) findViewById(R.id.post_item_read_more);
         thisThatView = (ThisThatView) findViewById(R.id.this_that_view_item);
         colorPicker = (LineColorPicker) findViewById(R.id.picker);
         submit = (Button) findViewById(R.id.button_submit_post);
+        for (int i = 0; i < thisThatView.getHolder().size(); i++) {
+            thisThatView.getHolder().get(i).getHierarchy().setPlaceholderImage(null);
+        }
         String path = "res:/" + R.drawable.ic_add_plus;
         try {
-            thisThatView.setImageToAllImages(new String[]{path, path});
+            thisThatView.setImageToAll(new String[]{path, path});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -181,7 +245,7 @@ public class AddPostActivity extends BaseActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        selectedImagePath = image.getAbsolutePath();
+        selectedImagePath[position] = image.getAbsolutePath();
         return image;
     }
 
@@ -214,11 +278,11 @@ public class AddPostActivity extends BaseActivity {
 
         if (requestCode == CAMERA_REQUEST) {
             if (resultCode != RESULT_OK) {
-                File f = new File(selectedImagePath);
+                File f = new File(selectedImagePath[position]);
                 Toast.makeText(getBaseContext(), "Error while capturing image", Toast.LENGTH_LONG).show();
                 f.delete();
             } else {
-                File f = new File(selectedImagePath);
+                File f = new File(selectedImagePath[position]);
                 Log.d("aman", "onActivityResult: " + f.getTotalSpace() + ":" + f.getUsableSpace());
             }
         } else if (resultCode == RESULT_OK && requestCode == GALLERY_PICTURE) {
@@ -233,20 +297,31 @@ public class AddPostActivity extends BaseActivity {
                 }
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
-                selectedImagePath = c.getString(columnIndex);
+                selectedImagePath[position] = c.getString(columnIndex);
                 c.close();
             } else {
                 Toast.makeText(getApplicationContext(), "Cancelled",
                         Toast.LENGTH_SHORT).show();
             }
         }
-        if (resultCode == RESULT_OK && selectedImagePath != null) {
+        if (resultCode == RESULT_OK && selectedImagePath[position] != null) {
             dialog.dismiss();
-            Log.d("aman", "onActivityResult: " + selectedImagePath);
-            File file = new File(selectedImagePath);
+            Log.d("aman", "onActivityResult: " + Arrays.toString(selectedImagePath));
+            File file = new File(selectedImagePath[position]);
             Log.d("aman", "onActivityResult:File=" + file.getName());
-            thisThatView.setImage(position, "file://" + selectedImagePath);
+            thisThatView.setImage(position, "file://" + selectedImagePath[position]);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(UploadFailEvent event) {
+        //TODO: alert and restart the upload
+        Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(UploadSuccessEvent event) {
+        Toast.makeText(this, "Posted", Toast.LENGTH_LONG).show();
     }
 
     public void checksStoragePermission() {

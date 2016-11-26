@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
-import com.qurux.coffeevizbeer.helper.ThisThatView;
 import com.qurux.coffeevizbeer.local.CvBContract;
+import com.qurux.coffeevizbeer.views.ThisThatView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,7 +68,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.thisThatView.setBackgroundColor(Color.parseColor(color));
         holder.title.setBackgroundColor(Color.parseColor(color));
         try {
-            holder.thisThatView.setImageToAllImages(new String[]{linkThis, linkThat});
+            holder.thisThatView.setImageToAll(new String[]{linkThis, linkThat});
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,23 +3,29 @@ package com.qurux.coffeevizbeer.helper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.bean.Post;
-import com.qurux.coffeevizbeer.bean.User;
-import com.qurux.coffeevizbeer.events.ItemTapEvent;
 import com.qurux.coffeevizbeer.local.CvBContract;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Aman Kapoor on 19-11-2016.
@@ -27,10 +33,10 @@ import java.util.Objects;
 
 public class FireBaseHelper {
 
-    public static void addPostToServer(Post post) {
+    public static void addPostToServer(Post post, DatabaseReference.CompletionListener completionListener) {
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post");
         String postKey = postRef.push().getKey();
-        postRef.child(postKey).setValue(post);
+        postRef.child(postKey).setValue(post, completionListener);
     }
 
     public static void likePostOnServer(String key, String userId, boolean state, DatabaseReference.CompletionListener completionListener) {
@@ -45,6 +51,27 @@ public class FireBaseHelper {
         Map<String, Object> like = new LinkedHashMap<>();
         like.put(key, state);
         postRef.updateChildren(like, completionListener);
+    }
+
+    public static void addPosttoUserOnServer(String key, String userId, DatabaseReference.CompletionListener completionListener) {
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("User").child(userId).child("posts");
+        Map<String, Object> post = new LinkedHashMap<>();
+        post.put(key, true);
+        postRef.updateChildren(post, completionListener);
+    }
+
+    @NonNull
+    public static UploadTask storeFileToServer(Context context, File file, FirebaseUser user, String date) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReferenceFromUrl(context.getString(R.string.firebase_storage_link));
+        String fileName = user.getDisplayName() + date + file.getName();
+        StorageReference imagesRef = storageRef.child("post_images").child(fileName);
+        Uri fileUri = Uri.fromFile(file);
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpg")
+                .build();
+        return imagesRef.putFile(fileUri, metadata);
     }
 
     public static void setNewPostListener(Context context) {

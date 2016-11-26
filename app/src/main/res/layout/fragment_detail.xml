@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.qurux.coffeevizbeer.helper.ThisThatView
+                <com.qurux.coffeevizbeer.views.ThisThatView
                     android:id="@+id/this_that_view_item"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/post_this_that_image_height"

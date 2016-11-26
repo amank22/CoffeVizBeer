@@ -54,6 +54,10 @@
             android:name=".ui.AddPostActivity"
             android:windowSoftInputMode="adjustPan|stateVisible" />
 
+        <service
+            android:name=".helper.UploadDataHelper"
+            android:exported="false" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.qurux.coffeevizbeer.fileprovider"

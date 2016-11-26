@@ -112,7 +112,7 @@
     <string name="new_post_hint_text">A story can be of anything which you thought is not a match but still it was. It could be a story of you and your crush or maybe a new food or drink combination you made last night which tastes awesome. Feel free to write anything. Add photos and text below.</string>
     <string name="post_title_hint_this">This</string>
     <string name="post_title_hint_that">That</string>
-    <string name="remove">(Change Visibility)</string>
+    <string name="remove">(Public/Anonymous)</string>
     <string name="hint_post_summary">Add a 160 or less words summary. Write something that attracts others to read your story. You can add complete detail below.</string>
     <string name="add_description">ADD DESCRIPTION</string>
     <string name="button_submit">Post your vizo</string>
@@ -123,5 +123,8 @@
     <string name="allow_camera">You need to allow camera usage.\nYou can update permission manually from Appinfo.</string>
     <string name="allow_storage">You need to allow storage usage.\nYou can update permission manually from Appinfo.</string>
     <string name="camera_perm_denied">You did not allow camera usage :(</string>
+    <string name="hint_long_description">Write some long description</string>
+    <string name="regex_local" translatable="true">Local:avatar[0–9]{1,2}</string>
+    <string name="firebase_storage_link" translatable="false">gs://coffee-viz-beer-da0f5.appspot.com</string>
 
 </resources>

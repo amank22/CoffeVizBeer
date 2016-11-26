@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.util.Log;
 
 import java.io.File;
 
@@ -64,5 +65,9 @@ public class CvBUtil {
         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
         return bitmap;
+    }
+
+    public static void log(String msg) {
+        Log.d("Aman", msg);
     }
 }

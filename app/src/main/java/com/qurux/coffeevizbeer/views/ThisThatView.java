@@ -1,4 +1,4 @@
-package com.qurux.coffeevizbeer.helper;
+package com.qurux.coffeevizbeer.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -152,7 +152,7 @@ public class ThisThatView extends View {
         gestureDetector = new GestureDetector(getContext(), cgestureDetector);
     }
 
-    public void setImageToAllImages(List<String> links) throws Exception {
+    public void setImageToAll(List<String> links) throws Exception {
         if (mDraweeHolder.size() != links.size()) {
             throw new Exception("Size of links and drawables does not match");
         }
@@ -161,7 +161,7 @@ public class ThisThatView extends View {
         }
     }
 
-    public void setImageToAllImages(String[] links) throws Exception {
+    public void setImageToAll(String[] links) throws Exception {
         if (mDraweeHolder.size() != links.length) {
             throw new Exception("Size of links and drawables does not match");
         }
@@ -196,6 +196,10 @@ public class ThisThatView extends View {
 
     public Drawable getDrawableAtPosition(int position) {
         return mDraweeHolder.get(position).getTopLevelDrawable();
+    }
+
+    public MultiDraweeHolder<GenericDraweeHierarchy> getHolder() {
+        return mDraweeHolder;
     }
 
     @Override

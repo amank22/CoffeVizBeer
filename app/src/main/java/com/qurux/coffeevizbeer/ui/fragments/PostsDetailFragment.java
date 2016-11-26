@@ -21,8 +21,8 @@ import android.widget.TextView;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
-import com.qurux.coffeevizbeer.helper.ThisThatView;
 import com.qurux.coffeevizbeer.local.CvBContract;
+import com.qurux.coffeevizbeer.views.ThisThatView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -121,7 +121,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         author.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
         descrption.setText(descriptionText);
         try {
-            thisThatView.setImageToAllImages(new String[]{linkThisString, linkThatString});
+            thisThatView.setImageToAll(new String[]{linkThisString, linkThatString});
         } catch (Exception e) {
             e.printStackTrace();
         }
