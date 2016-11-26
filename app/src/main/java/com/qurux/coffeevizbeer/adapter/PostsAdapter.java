@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +30,8 @@ import org.greenrobot.eventbus.EventBus;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
-    Cursor dataCursor;
-    Context context;
+    private Cursor dataCursor;
+    private Context context;
 
     public PostsAdapter(Context context, Cursor dataCursor) {
         this.dataCursor = dataCursor;

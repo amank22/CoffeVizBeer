@@ -67,7 +67,7 @@
                     android:layout_centerInParent="true"
                     android:maxLines="1"
                     android:text="@string/viz"
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/colorAccent"
                     android:textSize="@dimen/textSize_large" />
 
                 <EditText
@@ -80,8 +80,8 @@
                     android:hint="@string/post_title_hint_this"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite"
                     android:textSize="@dimen/textSize_large" />
 
                 <EditText
@@ -94,10 +94,19 @@
                     android:hint="@string/post_title_hint_that"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite"
                     android:textSize="@dimen/textSize_large" />
             </RelativeLayout>
+
+            <uz.shift.colorpicker.LineColorPicker xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/picker"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/text_margin_half"
+                app:colors="@array/colors_bg_options"
+                app:orientation="horizontal"
+                app:selectedColorIndex="0" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -8,4 +8,33 @@
     <color name="colorTextGrey">#363636</color>
     <color name="colorTextGreyLight">#636363</color>
     <color name="colorTextGreyExtraLight">#959595</color>
+
+
+    <color name="colorExtrasRed500">#F44336</color>
+    <color name="colorExtrasPink500">#E91E63</color>
+    <color name="colorExtrasPurple500">#9C27B0</color>
+    <color name="colorExtrasDeepPurple500">#673AB7</color>
+    <color name="colorExtrasCyan500">#00BCD4</color>
+    <color name="colorExtrasTeal500">#009688</color>
+    <color name="colorExtrasYellow500">#FFEB3B</color>
+    <color name="colorExtrasAmber500">#FFC107</color>
+    <color name="colorExtrasBrown500">#795548</color>
+    <color name="colorExtrasGrey500">#9E9E9E</color>
+    <color name="colorExtrasBlueGrey500">#607D8B</color>
+
+    <array name="colors_bg_options">
+        <item>@color/colorPrimary</item>
+        <item>@color/colorExtrasRed500</item>
+        <item>@color/colorExtrasPink500</item>
+        <item>@color/colorExtrasPurple500</item>
+        <item>@color/colorExtrasDeepPurple500</item>
+        <item>@color/colorExtrasCyan500</item>
+        <item>@color/colorExtrasTeal500</item>
+        <item>@color/colorExtrasYellow500</item>
+        <item>@color/colorExtrasAmber500</item>
+        <item>@color/colorExtrasBrown500</item>
+        <item>@color/colorExtrasGrey500</item>
+        <item>@color/colorExtrasBlueGrey500</item>
+        <item>@color/colorTextGrey</item>
+    </array>
 </resources>

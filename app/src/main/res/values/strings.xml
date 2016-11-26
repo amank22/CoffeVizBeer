@@ -112,7 +112,7 @@
     <string name="new_post_hint_text">A story can be of anything which you thought is not a match but still it was. It could be a story of you and your crush or maybe a new food or drink combination you made last night which tastes awesome. Feel free to write anything. Add photos and text below.</string>
     <string name="post_title_hint_this">This</string>
     <string name="post_title_hint_that">That</string>
-    <string name="remove">(Go Anonymous)</string>
+    <string name="remove">(Change Visibility)</string>
     <string name="hint_post_summary">Add a 160 or less words summary. Write something that attracts others to read your story. You can add complete detail below.</string>
     <string name="add_description">ADD DESCRIPTION</string>
     <string name="button_submit">Post your vizo</string>

@@ -49,6 +49,7 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
     compile 'com.android.support:support-v4:25.0.0'
+    compile(group: 'uz.shift', name: 'colorpicker', version: '0.5', ext: 'aar')
     testCompile 'junit:junit:4.12'
 }
 

@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,10 +17,12 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,21 +41,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import uz.shift.colorpicker.LineColorPicker;
+
 public class AddPostActivity extends BaseActivity {
 
     protected static final int CAMERA_REQUEST = 0;
     protected static final int GALLERY_PICTURE = 1;
     private static final int MY_REQUEST_CODE = 4445;
     private static final int MY_REQUEST_CODE_STORAGE = 4444;
-    TextView titleThis, titleThat, author, remove, summary;
-    TextView addDecp;
-    ThisThatView thisThatView;
-    Button submit;
-    Bitmap bitmap;
-    ImageChooserDialog dialog;
-    private Intent pictureActionIntent = null;
+    RelativeLayout titleLayout;
+    private TextView titleThis, titleThat, author, remove, summary;
+    private TextView addDecp;
+    private ThisThatView thisThatView;
+    private Button submit;
+    private ImageChooserDialog dialog;
     private String selectedImagePath;
     private int position = ImageChooserDialog.OPTION_INVALID;
+    private boolean isAnonymous = false;
+    private LineColorPicker colorPicker;
+    private int currentColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +68,31 @@ public class AddPostActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initViews();
         String user = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        assert user != null;
         author.setText(user);
         SpannableString underlineRemove = new SpannableString(remove.getText());
         underlineRemove.setSpan(new UnderlineSpan(), 0, remove.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         remove.setText(underlineRemove);
+        setClickListeners(user);
+        colorPicker.setOnColorChangedListener(i -> {
+            currentColor = i;
+            setBackgroundColor();
+        });
+        checksStoragePermission();
+    }
+
+    private void setClickListeners(String user) {
+        SpannableString strikeThrough = new SpannableString(user);
+        strikeThrough.setSpan(new StrikethroughSpan(), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        remove.setOnClickListener(view -> {
+            if (isAnonymous) {
+                isAnonymous = false;
+                author.setText(user);
+            } else {
+                isAnonymous = true;
+                author.setText(strikeThrough);
+            }
+        });
         thisThatView.setClickListenerForThisThat(new ThisThatView.OnClickListenerForThisThat() {
             @Override
             public void onThisClicked() {
@@ -78,7 +104,11 @@ public class AddPostActivity extends BaseActivity {
                 callDialog(ImageChooserDialog.OPTION_THAT);
             }
         });
-        checksStoragePermission();
+    }
+
+    private void setBackgroundColor() {
+        thisThatView.setBackgroundColor(currentColor);
+        titleLayout.setBackgroundColor(currentColor);
     }
 
     @Override
@@ -89,11 +119,13 @@ public class AddPostActivity extends BaseActivity {
     private void initViews() {
         titleThis = (TextView) findViewById(R.id.post_item_title_this);
         titleThat = (TextView) findViewById(R.id.post_item_title_that);
+        titleLayout = (RelativeLayout) findViewById(R.id.title_layout_add);
         author = (TextView) findViewById(R.id.post_item_author);
         remove = (TextView) findViewById(R.id.post_item_remove_author);
         summary = (TextView) findViewById(R.id.post_item_summary);
         addDecp = (TextView) findViewById(R.id.post_item_read_more);
         thisThatView = (ThisThatView) findViewById(R.id.this_that_view_item);
+        colorPicker = (LineColorPicker) findViewById(R.id.picker);
         submit = (Button) findViewById(R.id.button_submit_post);
         String path = "res:/" + R.drawable.ic_add_plus;
         try {
@@ -132,7 +164,7 @@ public class AddPostActivity extends BaseActivity {
     }
 
     private void openGalleryIntent() {
-        pictureActionIntent = new Intent(Intent.ACTION_PICK,
+        Intent pictureActionIntent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pictureActionIntent, GALLERY_PICTURE);
     }
@@ -179,8 +211,6 @@ public class AddPostActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-
-        bitmap = null;
 
         if (requestCode == CAMERA_REQUEST) {
             if (resultCode != RESULT_OK) {
