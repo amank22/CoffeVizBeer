@@ -1,21 +1,17 @@
 package com.qurux.coffeevizbeer.ui;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -44,10 +40,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 import uz.shift.colorpicker.LineColorPicker;
 
@@ -138,7 +130,6 @@ public class AddPostActivity extends BaseActivity {
         bundle.putString(UploadDataHelper.KEY_COLOR, "#" + Integer.toHexString(currentColor));
         bundle.putBoolean(UploadDataHelper.KEY_ANONYMOUS, isAnonymous);
         bundle.putStringArray(UploadDataHelper.KEY_LINKS, selectedImagePath);
-        CvBUtil.log("Submitting Data");
         Intent service = new Intent(this, UploadDataHelper.class);
         service.putExtras(bundle);
         UploadDataHelper.handleUpdateIntent(this, service);
@@ -235,8 +226,7 @@ public class AddPostActivity extends BaseActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -306,9 +296,6 @@ public class AddPostActivity extends BaseActivity {
         }
         if (resultCode == RESULT_OK && selectedImagePath[position] != null) {
             dialog.dismiss();
-            Log.d("aman", "onActivityResult: " + Arrays.toString(selectedImagePath));
-            File file = new File(selectedImagePath[position]);
-            Log.d("aman", "onActivityResult:File=" + file.getName());
             thisThatView.setImage(position, "file://" + selectedImagePath[position]);
         }
     }
@@ -321,59 +308,21 @@ public class AddPostActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(UploadSuccessEvent event) {
-        Toast.makeText(this, "Posted", Toast.LENGTH_LONG).show();
+        Intent i = new Intent(this, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
 
     public void checksStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.d("MyApp", "SDK >= 23");
-            if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_REQUEST_CODE_STORAGE);
-
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    showMessageOKCancel(getString(R.string.allow_storage),
-                            (dialog, which) -> ActivityCompat.requestPermissions(AddPostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    MY_REQUEST_CODE_STORAGE));
-                }
-            }
-        } else {
-            Log.d("MyApp", "Android < 6.0");
-        }
+        CvBUtil.checkPermissionRuntime(this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                getString(R.string.allow_storage), MY_REQUEST_CODE_STORAGE);
+        CvBUtil.checkPermissionRuntime(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                getString(R.string.allow_storage), MY_REQUEST_CODE_STORAGE);
     }
 
 
     public void checksCameraPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.d("MyApp", "SDK >= 23");
-            if (this.checkSelfPermission(Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA},
-                        MY_REQUEST_CODE);
-
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                    showMessageOKCancel(getString(R.string.allow_camera),
-                            (dialog, which) -> ActivityCompat.requestPermissions(AddPostActivity.this, new String[]{Manifest.permission.CAMERA},
-                                    MY_REQUEST_CODE));
-                }
-            } else {
-                dispatchTakePictureIntent();
-            }
-        } else {
-            Log.d("MyApp", "Android < 6.0");
-        }
-    }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
+        CvBUtil.checkPermissionRuntime(this, Manifest.permission.CAMERA, getString(R.string.allow_camera), MY_REQUEST_CODE);
     }
 
     @Override
