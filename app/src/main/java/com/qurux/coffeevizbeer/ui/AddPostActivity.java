@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,12 +22,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
+import com.qurux.coffeevizbeer.dialog.AvatarDialog;
 import com.qurux.coffeevizbeer.dialog.ImageChooserDialog;
 import com.qurux.coffeevizbeer.events.ImageChooserEvent;
 import com.qurux.coffeevizbeer.events.UploadFailEvent;
@@ -52,6 +55,7 @@ public class AddPostActivity extends BaseActivity {
     private static final String CONFIG_KEY_IMG = "config_change_images";
     private static final String CONFIG_KEY_COLOR = "config_change_color";
     private static final String CONFIG_KEY_ANONYMOUS = "config_change_anonym";
+
     RelativeLayout titleLayout;
     private EditText titleThis, titleThat, summary, desc;
     private ImageButton remove;
@@ -59,6 +63,8 @@ public class AddPostActivity extends BaseActivity {
     private ThisThatView thisThatView;
     private Button submit, addDecp;
     private ImageChooserDialog dialog;
+    private ProgressBar progress;
+
     private String selectedImagePath[] = new String[2];
     private int position = ImageChooserDialog.OPTION_INVALID;
     private boolean isAnonymous = false;
@@ -119,9 +125,12 @@ public class AddPostActivity extends BaseActivity {
     }
 
     private void submitData() {
-//        if (!verifyData()) {
-//            return;
-//        }
+        try {
+            verifyData();
+        } catch (Exception e) {
+            return;
+        }
+        progress.setVisibility(View.VISIBLE);
         Bundle bundle = new Bundle();
         String title = titleThis.getText() + " viz " + titleThat.getText();
         bundle.putString(UploadDataHelper.KEY_TITLE, title);
@@ -135,8 +144,23 @@ public class AddPostActivity extends BaseActivity {
         UploadDataHelper.handleUpdateIntent(this, service);
     }
 
-    private boolean verifyData() {
-        return false;
+    private void verifyData() throws Exception {
+        validateEditText(titleThis, 3, "Min 3");
+        validateEditText(titleThat, 3, "Min 3");
+        validateEditText(summary, 20, "Summary must be atleast 20 characters long");
+        for (String s : selectedImagePath) {
+            if (s == null || s.length() <= 0) {
+                Toast.makeText(this, "Photos must be set", Toast.LENGTH_LONG).show();
+                throw new Exception("Photos must be set");
+            }
+        }
+    }
+
+    private void validateEditText(EditText editText, int minLength, String msg) throws Exception {
+        if (editText.getText().length() < minLength) {
+            editText.setError(msg);
+            throw new Exception(msg);
+        }
     }
 
     private void checkAndSetUser(String user, SpannableString strikeThrough) {
@@ -179,6 +203,7 @@ public class AddPostActivity extends BaseActivity {
         thisThatView = (ThisThatView) findViewById(R.id.this_that_view_item);
         colorPicker = (LineColorPicker) findViewById(R.id.picker);
         submit = (Button) findViewById(R.id.button_submit_post);
+        progress = (ProgressBar) findViewById(R.id.post_progressbar);
         for (int i = 0; i < thisThatView.getHolder().size(); i++) {
             thisThatView.getHolder().get(i).getHierarchy().setPlaceholderImage(null);
         }
@@ -201,18 +226,15 @@ public class AddPostActivity extends BaseActivity {
     public void onMessageEvent(ImageChooserEvent event) {
         switch (event.getSelectedOption()) {
             case ImageChooserEvent.OPTION_CAMERA:
-                Log.d("ImageDialog", "Camera Clicked");
-                //TODO:Open camera intent
                 checksCameraPermission();
                 break;
             case ImageChooserEvent.OPTION_GALLERY:
-                Log.d("ImageDialog", "Gallery Clicked");
-                //TODO:Open gallery intent
                 openGalleryIntent();
                 break;
             case ImageChooserEvent.OPTION_AVATAR:
-                Log.d("ImageDialog", "Avatar Clicked");
-                //TODO:Create an bottomsheet to show all avatars
+                dialog.dismiss();
+                AvatarDialog avatarDialog = new AvatarDialog();
+                avatarDialog.show(getSupportFragmentManager(), "Avatar-tag");
                 break;
         }
 
@@ -304,6 +326,7 @@ public class AddPostActivity extends BaseActivity {
     public void onMessageEvent(UploadFailEvent event) {
         //TODO: alert and restart the upload
         Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
+        progress.setVisibility(View.INVISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -314,8 +337,10 @@ public class AddPostActivity extends BaseActivity {
     }
 
     public void checksStoragePermission() {
-        CvBUtil.checkPermissionRuntime(this, Manifest.permission.READ_EXTERNAL_STORAGE,
-                getString(R.string.allow_storage), MY_REQUEST_CODE_STORAGE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            CvBUtil.checkPermissionRuntime(this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.allow_storage), MY_REQUEST_CODE_STORAGE);
+        }
         CvBUtil.checkPermissionRuntime(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.allow_storage), MY_REQUEST_CODE_STORAGE);
     }

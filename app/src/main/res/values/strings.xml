@@ -126,5 +126,6 @@
     <string name="hint_long_description">Write some long description</string>
     <string name="regex_local" translatable="true">Local:avatar[0–9]{1,2}</string>
     <string name="firebase_storage_link" translatable="false">gs://coffee-viz-beer-da0f5.appspot.com</string>
+    <string name="desc_avatars">Avatars</string>
 
 </resources>
