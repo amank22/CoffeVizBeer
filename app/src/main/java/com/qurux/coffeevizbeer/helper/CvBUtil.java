@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.qurux.coffeevizbeer.R;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,10 +26,20 @@ import java.io.IOException;
 
 public class CvBUtil {
 
+
     public static void log(String msg) {
         Log.d("Aman", msg);
     }
 
+    /**
+     * Checks the runtime permission introduced in Android M and if not given asks for it.
+     *
+     * @param activity    Associated Activity for requesting permission.
+     *                    Activity handles the {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback}
+     * @param permission  The permission string to grant access to.
+     * @param message     Message for the dialog for asking permission
+     * @param requestCode Request code for permission granting and referencing.
+     */
     public static void checkPermissionRuntime(Activity activity, String permission, String message, int requestCode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (activity.checkSelfPermission(permission)
@@ -139,5 +151,56 @@ public class CvBUtil {
         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
         return bitmap;
+    }
+
+    public static boolean checkLocalRegex(Context context, String link) {
+        return link.matches(context.getString(R.string.regex_local));
+    }
+
+    /**
+     * Get Avatar resource id at position
+     *
+     * @param position position at which avatar is(starts with 1)
+     * @return Resource id
+     */
+    public static int getAvatarResId(int position) {
+        switch (position) {
+            case 1:
+                return R.drawable.ic_avatar1;
+            case 2:
+                return R.drawable.ic_avatar2;
+            case 3:
+                return R.drawable.ic_avatar3;
+            case 4:
+                return R.drawable.ic_avatar4;
+            case 5:
+                return R.drawable.ic_avatar5;
+            case 6:
+                return R.drawable.ic_avatar6;
+            case 7:
+                return R.drawable.ic_avatar7;
+            case 8:
+                return R.drawable.ic_avatar8;
+            case 9:
+                return R.drawable.ic_avatar9;
+            case 10:
+                return R.drawable.ic_avatar10;
+            case 11:
+                return R.drawable.ic_avatar11;
+            case 12:
+                return R.drawable.ic_avatar1;
+            case 13:
+                return R.drawable.ic_avatar13;
+            case 14:
+                return R.drawable.ic_avatar14;
+            case 15:
+                return R.drawable.ic_avatar15;
+            case 16:
+                return R.drawable.ic_avatar16;
+            case 17:
+                return R.drawable.ic_avatar17;
+            default:
+                return -1;
+        }
     }
 }

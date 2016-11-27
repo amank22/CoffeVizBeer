@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.qurux.coffeevizbeer.R;
+import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Aman Kapoor on 19-11-2016.
@@ -17,8 +20,8 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
     private int[] avatars = {
             R.drawable.ic_avatar1, R.drawable.ic_avatar2, R.drawable.ic_avatar3, R.drawable.ic_avatar4,
             R.drawable.ic_avatar5, R.drawable.ic_avatar6, R.drawable.ic_avatar7, R.drawable.ic_avatar8,
-            R.drawable.ic_avatar9, R.drawable.ic_avatar11, R.drawable.ic_avatar12, R.drawable.ic_avatar14,
-            R.drawable.ic_avatar15, R.drawable.ic_avatar16, R.drawable.ic_avatar17, R.drawable.ic_avatar18
+            R.drawable.ic_avatar9, R.drawable.ic_avatar10, R.drawable.ic_avatar11, R.drawable.ic_avatar13,
+            R.drawable.ic_avatar14, R.drawable.ic_avatar15, R.drawable.ic_avatar16, R.drawable.ic_avatar17
     };
 
     public AvatarAdapter() {
@@ -46,13 +49,18 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
         super.setHasStableIds(true);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView avatar;
 
         ViewHolder(View v) {
             super(v);
             avatar = (ImageView) v;
+            v.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            EventBus.getDefault().post(new ItemTapAdapterEvent(-1, getAdapterPosition()));
+        }
     }
 }

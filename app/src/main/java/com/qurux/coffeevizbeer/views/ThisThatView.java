@@ -20,7 +20,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.DraweeHolder;
 import com.facebook.drawee.view.MultiDraweeHolder;
-import com.qurux.coffeevizbeer.R;
 
 import java.util.List;
 
@@ -66,14 +65,14 @@ public class ThisThatView extends View {
         GenericDraweeHierarchy gdh = new GenericDraweeHierarchyBuilder(getResources())
                 .setRoundingParams(RoundingParams.asCircle())
                 .setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP)
-                .setPlaceholderImage(R.drawable.circle_blue)
-                .setFadeDuration(200)
+                .setPlaceholderImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .setFadeDuration(0)
                 .build();
         GenericDraweeHierarchy gdh2 = new GenericDraweeHierarchyBuilder(getResources())
                 .setRoundingParams(RoundingParams.asCircle())
                 .setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP)
-                .setPlaceholderImage(R.drawable.circle_green)
-                .setFadeDuration(200)
+                .setPlaceholderImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .setFadeDuration(0)
                 .build();
         DraweeHolder<GenericDraweeHierarchy> thisDraweeHolder = DraweeHolder.create(gdh, getContext());
         DraweeHolder<GenericDraweeHierarchy> thatDraweeHolder = DraweeHolder.create(gdh2, getContext());
@@ -176,6 +175,10 @@ public class ThisThatView extends View {
                 .setOldController(mDraweeHolder.get(position).getController())
                 .setContentDescription("Vizo Image " + position);
         mDraweeHolder.get(position).setController(builder.build());
+    }
+
+    public void removeImage(int position) {
+        mDraweeHolder.get(position).setController(null);
     }
 
     public void setImage(int position, Uri uri) {

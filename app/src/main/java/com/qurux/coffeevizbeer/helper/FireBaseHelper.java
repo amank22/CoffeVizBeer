@@ -108,6 +108,7 @@ public class FireBaseHelper {
         postRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                CvBUtil.log("starting onDatachange");
                 Map<String, Post> tempPosts = new LinkedHashMap<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (!posts.containsKey(snapshot.getKey())) {
@@ -162,14 +163,21 @@ public class FireBaseHelper {
         }
     }
 
-    private static void addRowsToMap(Context context, Map<String, Post> posts) {
-        Cursor already = context.getContentResolver().query(CvBContract.PostsEntry.CONTENT_URI, new String[]{CvBContract.PostsEntry.COLUMN_SERVER_ID},
+    private static void addRowsToMap(@NonNull Context context, Map<String, Post> posts) {
+        if (context == null) {
+            CvBUtil.log("Context Null");
+        }
+        Cursor already = context.getContentResolver().query(CvBContract.PostsEntry.CONTENT_URI,
+                new String[]{CvBContract.PostsEntry.COLUMN_SERVER_ID},
                 null, null, null);
+        CvBUtil.log("starting local db old posts check");
         if (already == null) {
+            CvBUtil.log("old posts null");
             return;
         }
         try {
             while (already.moveToNext()) {
+                CvBUtil.log("old post id:" + already.getString(0));
                 posts.put(already.getString(0), new Post());
             }
         } finally {

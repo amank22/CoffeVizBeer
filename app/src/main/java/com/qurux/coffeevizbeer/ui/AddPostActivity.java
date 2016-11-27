@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,8 +14,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.AppCompatDrawableManager;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +36,7 @@ import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.dialog.AvatarDialog;
 import com.qurux.coffeevizbeer.dialog.ImageChooserDialog;
 import com.qurux.coffeevizbeer.events.ImageChooserEvent;
+import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.UploadFailEvent;
 import com.qurux.coffeevizbeer.events.UploadSuccessEvent;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
@@ -70,6 +75,7 @@ public class AddPostActivity extends BaseActivity {
     private boolean isAnonymous = false;
     private LineColorPicker colorPicker;
     private int currentColor;
+    private AvatarDialog avatarDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +108,8 @@ public class AddPostActivity extends BaseActivity {
             setBackgroundColor();
         });
         checksStoragePermission();
+        addTextWatchListener(titleThis);
+        addTextWatchListener(titleThat);
     }
 
     private void setClickListeners(String user, SpannableString strikeThrough) {
@@ -124,6 +132,27 @@ public class AddPostActivity extends BaseActivity {
         submit.setOnClickListener(view -> submitData());
     }
 
+    private void addTextWatchListener(final EditText watchText) {
+        watchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (i1 == 0 && charSequence.length() > 0) {
+                    watchText.setError(getString(R.string.error_title_space));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
     private void submitData() {
         try {
             verifyData();
@@ -132,7 +161,8 @@ public class AddPostActivity extends BaseActivity {
         }
         progress.setVisibility(View.VISIBLE);
         Bundle bundle = new Bundle();
-        String title = titleThis.getText() + " viz " + titleThat.getText();
+        String title = titleThis.getText().toString().replaceAll("(\\s|\\t|\\n|\\r)", "") + " viz " +
+                titleThat.getText().toString().replaceAll("(\\s|\\t|\\n|\\r)", "");
         bundle.putString(UploadDataHelper.KEY_TITLE, title);
         bundle.putString(UploadDataHelper.KEY_SUMMARY, summary.getText().toString());
         bundle.putString(UploadDataHelper.KEY_DESCRIPTION, desc.getText().toString());
@@ -207,12 +237,9 @@ public class AddPostActivity extends BaseActivity {
         for (int i = 0; i < thisThatView.getHolder().size(); i++) {
             thisThatView.getHolder().get(i).getHierarchy().setPlaceholderImage(null);
         }
-        String path = "res:/" + R.drawable.ic_add_plus;
-        try {
-            thisThatView.setImageToAll(new String[]{path, path});
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        String path = "res:/" + R.drawable.ic_add_plus;
+        thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.ic_add_plus);
+        thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.ic_add_plus);
     }
 
     private void callDialog(int position) {
@@ -233,10 +260,24 @@ public class AddPostActivity extends BaseActivity {
                 break;
             case ImageChooserEvent.OPTION_AVATAR:
                 dialog.dismiss();
-                AvatarDialog avatarDialog = new AvatarDialog();
+                avatarDialog = new AvatarDialog();
                 avatarDialog.show(getSupportFragmentManager(), "Avatar-tag");
                 break;
         }
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ItemTapAdapterEvent event) {
+        avatarDialog.dismiss();
+        int pos = event.getPosition();
+        CvBUtil.log("Adapter Position:" + (pos + 1));
+        int avatarRes = CvBUtil.getAvatarResId(pos + 1);
+        selectedImagePath[position] = String.format(getString(R.string.avatar_local_link_start), pos);
+        CvBUtil.log("Adapter Path:" + selectedImagePath[position]);
+        Drawable hack = AppCompatDrawableManager.get().getDrawable(this, avatarRes);
+        thisThatView.getHolder().get(position).getHierarchy().setPlaceholderImage(hack);
+//        thisThatView.setImage(position, Uri.parse("res:/" + avatarRes));
 
     }
 

@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.bean.User;
+import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 
 import java.util.HashSet;
@@ -28,8 +29,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class CvBApp extends Application {
 
-    private User userExtra;
     private static CvBApp sInstance;
+    private User userExtra;
 
     public static CvBApp getInstance() {
         if (sInstance == null) {
@@ -54,10 +55,13 @@ public class CvBApp extends Application {
                 .setFontAttrId(R.attr.fontPath)
                 .build());
         setFirebaseListeners();
+        sInstance = this;
     }
 
     public void setFirebaseListeners() {
+        CvBUtil.log("starting firebase listeners");
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            CvBUtil.log("started with firebase listeners");
             getCurrentExtraUser();
             setListenerForNewPosts();
         }
@@ -84,6 +88,7 @@ public class CvBApp extends Application {
     }
 
     private void setListenerForNewPosts() {
-        FireBaseHelper.setNewPostListener(this);
+        CvBUtil.log("starting firebase Posts Listeners");
+        FireBaseHelper.setNewPostListener(sInstance);
     }
 }

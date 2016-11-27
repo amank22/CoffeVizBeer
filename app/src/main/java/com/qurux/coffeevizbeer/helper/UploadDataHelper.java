@@ -9,7 +9,6 @@ import android.os.Environment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.UploadTask;
-import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.app.CvBApp;
 import com.qurux.coffeevizbeer.bean.Post;
 import com.qurux.coffeevizbeer.events.UploadFailEvent;
@@ -145,7 +144,7 @@ public class UploadDataHelper {
     }
 
     private static boolean checkLocalRegex(Context context, String link) {
-        return link.matches(context.getString(R.string.regex_local));
+        return CvBUtil.checkLocalRegex(context, link);
     }
 
     private static void addNewPost(String title, String linkThis, String linkThat, String summary,

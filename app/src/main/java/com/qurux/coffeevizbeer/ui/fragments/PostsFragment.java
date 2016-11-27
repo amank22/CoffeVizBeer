@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -37,15 +36,13 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public class PostsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String ARG_POST_TYPE = "post_type";
-
     public static final int ALL_POSTS_LOADER = 0;
     public static final int ALL_BOOKMARKED_POSTS_LOADER = 1;
-
+    private static final String ARG_POST_TYPE = "post_type";
+    RecyclerView recyclerView;
     // TODO: Rename and change types of parameters
     private int type = ALL_POSTS_LOADER;
     private PostsAdapter adapter;
-
 
     public PostsFragment() {
         // Required empty public constructor
@@ -83,8 +80,6 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         return inflater.inflate(R.layout.content_home, container, false);
     }
 
-    RecyclerView recyclerView;
-
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
@@ -102,10 +97,12 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader loader = null;
         if (id == ALL_POSTS_LOADER)
-            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null, null, null, null);
+            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null, null, null,
+                    CvBContract.PostsEntry._ID + " DESC");
         else if (id == ALL_BOOKMARKED_POSTS_LOADER) {
             String selection = CvBContract.PostsEntry.COLUMN_BOOKMARKED + "=1";
-            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null, selection, null, null);
+            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null, selection, null,
+                    CvBContract.PostsEntry._ID + " DESC");
         }
         return loader;
     }

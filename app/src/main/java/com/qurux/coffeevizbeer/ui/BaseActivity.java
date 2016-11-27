@@ -59,12 +59,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (user != null) {
             // Go back to the main activity
             if (this instanceof LoginActivity) {
-                startActivity(new Intent(this, HomeActivity.class));
+                CvBApp.getInstance().setFirebaseListeners();
+                Intent i = new Intent(this, HomeActivity.class);
+                startActivity(i);
                 finish();
             }
         } else {
             if (!(this instanceof LoginActivity)) {
-                CvBApp.getInstance().setFirebaseListeners();
                 Intent i = new Intent(this, LoginActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
