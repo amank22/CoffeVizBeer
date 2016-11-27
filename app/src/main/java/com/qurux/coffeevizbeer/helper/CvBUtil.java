@@ -48,14 +48,15 @@ public class CvBUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (activity.checkSelfPermission(permission)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{permission},
-                        requestCode);
 
                 if (!activity.shouldShowRequestPermissionRationale(permission)) {
                     showMessageOKCancel(activity, message,
                             (dialog, which) -> ActivityCompat.requestPermissions(activity, new String[]{permission},
                                     requestCode));
+                } else {
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{permission},
+                            requestCode);
                 }
             }
         } else {
@@ -218,7 +219,7 @@ public class CvBUtil {
             case 11:
                 return R.drawable.ic_avatar11;
             case 12:
-                return R.drawable.ic_avatar1;
+                return R.drawable.ic_avatar12;
             case 13:
                 return R.drawable.ic_avatar13;
             case 14:
