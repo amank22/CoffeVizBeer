@@ -129,5 +129,8 @@
     <string name="desc_avatars">Avatars</string>
     <string name="avatar_local_link_start" translatable="false">Local:avatar%d</string>
     <string name="error_title_space">Only single lined without space</string>
+    <string name="error_title_min">Min 3</string>
+    <string name="error_summary_min">Summary must be atleast 20 characters long</string>
+    <string name="error_photos_set">Photos must be set</string>
 
 </resources>

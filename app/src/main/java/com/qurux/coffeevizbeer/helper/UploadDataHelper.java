@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,11 +16,7 @@ import com.qurux.coffeevizbeer.events.UploadSuccessEvent;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,40 +76,14 @@ public class UploadDataHelper {
         }
     }
 
-    private static void copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
-
-    private static File createDestinationFile(Context context) throws IOException {
-        // Create an image file name
-        String imageFileName = "JPEG_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-    }
-
-
     private static void getUploadTask(String[] serverLinks, Context context, String Link, int position, String nextLink, int nextPos, String title, String summary,
                                       String longDesc, String author, String authorId, String dateTime, String color) {
         File original = new File(Link);
         File copy;
         //We don't want the original to compress
         try {
-            copy = createDestinationFile(context);
-            copy(original, copy);
+            copy = CvBUtil.createDestinationFile(context);
+            CvBUtil.copy(original, copy);
             copy = CvBUtil.PhotoCompressor(copy);
         } catch (IOException e) {
             copy = original;

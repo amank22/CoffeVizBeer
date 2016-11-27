@@ -21,6 +21,7 @@ import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.adapter.PostsAdapter;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
+import com.qurux.coffeevizbeer.events.SearchEvent;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.ui.DetailActivity;
@@ -38,7 +39,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public static final int ALL_POSTS_LOADER = 0;
     public static final int ALL_BOOKMARKED_POSTS_LOADER = 1;
+    public static final int ALL_SEARCH_LOADER = 2;
     private static final String ARG_POST_TYPE = "post_type";
+    private static final String SEARCH_KEY = "search_key";
     RecyclerView recyclerView;
     // TODO: Rename and change types of parameters
     private int type = ALL_POSTS_LOADER;
@@ -103,10 +106,13 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             String selection = CvBContract.PostsEntry.COLUMN_BOOKMARKED + "=1";
             loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null, selection, null,
                     CvBContract.PostsEntry._ID + " DESC");
+        } else if (id == ALL_SEARCH_LOADER) {
+            String key = args.getString(SEARCH_KEY, "");
+            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.buildSearchUri(key), null, null, null,
+                    CvBContract.PostsEntry._ID + " DESC");
         }
         return loader;
     }
-
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -135,6 +141,18 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             EventBus.getDefault().unregister(this);
         } catch (Exception e) {
             e.fillInStackTrace();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SearchEvent event) {
+        String searchText = event.getSearchText();
+        if (searchText != null) {
+            Bundle b = new Bundle();
+            b.putString(SEARCH_KEY, searchText);
+            getLoaderManager().restartLoader(ALL_SEARCH_LOADER, b, this);
+        } else {
+            getLoaderManager().restartLoader(type, null, this);
         }
     }
 

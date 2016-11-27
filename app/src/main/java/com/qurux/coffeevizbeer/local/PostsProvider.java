@@ -23,24 +23,22 @@ public class PostsProvider extends ContentProvider {
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private PostsDbHelper mOpenHelper;
-
     private static final SQLiteQueryBuilder queryBuilder;
+    private static final String sPostByIdSelection =
+            CvBContract.PostsEntry.TABLE_NAME +
+                    "." + CvBContract.PostsEntry._ID + " = ? ";
+    //posts title has the text
+    private static final String sPostsBySearchSelection =
+            "LOWER(" + CvBContract.PostsEntry.COLUMN_TITLE + ") LIKE ? OR " +
+                    "LOWER(" + CvBContract.PostsEntry.TABLE_NAME + "." + CvBContract.PostsEntry.COLUMN_SUMMARY + ") LIKE ? OR " +
+                    "LOWER(" + CvBContract.PostsEntry.TABLE_NAME + "." + CvBContract.PostsEntry.COLUMN_DESCRIPTION + ") LIKE ? ";
 
     static {
         queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(CvBContract.PostsEntry.TABLE_NAME);
     }
 
-    private static final String sPostByIdSelection =
-            CvBContract.PostsEntry.TABLE_NAME +
-                    "." + CvBContract.PostsEntry._ID + " = ? ";
-
-    //posts title has the text
-    private static final String sPostsBySearchSelection =
-            "LOWER(" + CvBContract.PostsEntry.TABLE_NAME + "." + CvBContract.PostsEntry.COLUMN_TITLE + ") LIKE ? OR " +
-                    "LOWER(" + CvBContract.PostsEntry.TABLE_NAME + "." + CvBContract.PostsEntry.COLUMN_SUMMARY + ") LIKE ? OR" +
-                    "LOWER(" + CvBContract.PostsEntry.TABLE_NAME + "." + CvBContract.PostsEntry.COLUMN_DESCRIPTION + ") LIKE ? ";
+    private PostsDbHelper mOpenHelper;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -81,7 +79,6 @@ public class PostsProvider extends ContentProvider {
     private Cursor searchPostsByKey(
             Uri uri, String[] projection, String sortOrder) {
         String key = "%" + uri.getLastPathSegment().toLowerCase() + "%";
-
         return queryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 sPostsBySearchSelection,

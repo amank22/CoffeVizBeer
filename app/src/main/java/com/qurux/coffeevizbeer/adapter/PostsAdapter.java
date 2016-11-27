@@ -86,7 +86,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             holder.thisThatView.removeImage(1);
             holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
         } else {
-            holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.circle_green);
+            holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.circle_green);
             holder.thisThatView.setImage(1, linkThat);
         }
         if (bookmarked == 0)

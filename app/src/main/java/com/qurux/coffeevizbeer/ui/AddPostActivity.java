@@ -175,12 +175,12 @@ public class AddPostActivity extends BaseActivity {
     }
 
     private void verifyData() throws Exception {
-        validateEditText(titleThis, 3, "Min 3");
-        validateEditText(titleThat, 3, "Min 3");
-        validateEditText(summary, 20, "Summary must be atleast 20 characters long");
+        validateEditText(titleThis, 3, getString(R.string.error_title_min));
+        validateEditText(titleThat, 3, getString(R.string.error_title_min));
+        validateEditText(summary, 20, getString(R.string.error_summary_min));
         for (String s : selectedImagePath) {
             if (s == null || s.length() <= 0) {
-                Toast.makeText(this, "Photos must be set", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.error_photos_set, Toast.LENGTH_LONG).show();
                 throw new Exception("Photos must be set");
             }
         }

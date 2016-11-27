@@ -61,6 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (this instanceof LoginActivity) {
                 CvBApp.getInstance().setFirebaseListeners();
                 Intent i = new Intent(this, HomeActivity.class);
+//                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(i);
                 finish();
             }

@@ -50,6 +50,10 @@ public class CvBContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static Uri buildSearchUri(String key) {
+            return CONTENT_URI.buildUpon().appendPath(key).build();
+        }
+
 
     }
 
