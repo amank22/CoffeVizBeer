@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".AndroidDatabaseManager"
+            android:name=".helper.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
 
         <activity

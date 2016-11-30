@@ -1,4 +1,4 @@
-package com.qurux.coffeevizbeer;//add your package name here example: package com.example.dbm;
+package com.qurux.coffeevizbeer.helper;//add your package name here example: package com.example.dbm;
 
 //all required import files
 

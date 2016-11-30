@@ -19,9 +19,13 @@ import android.view.ViewGroup;
 
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.adapter.PostsAdapter;
+import com.qurux.coffeevizbeer.app.CvBApp;
+import com.qurux.coffeevizbeer.bean.User;
+import com.qurux.coffeevizbeer.events.ErrorEvent;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
 import com.qurux.coffeevizbeer.events.SearchEvent;
+import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.ui.DetailActivity;
@@ -29,6 +33,9 @@ import com.qurux.coffeevizbeer.ui.DetailActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,9 +47,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public static final int ALL_POSTS_LOADER = 0;
     public static final int ALL_BOOKMARKED_POSTS_LOADER = 1;
     public static final int ALL_SEARCH_LOADER = 2;
+    public static final int USER_POSTS_LOADER = 3;
     private static final String ARG_POST_TYPE = "post_type";
     private static final String SEARCH_KEY = "search_key";
-    private RecyclerView recyclerView;
 
     private int type = ALL_POSTS_LOADER;
     private PostsAdapter adapter;
@@ -86,7 +93,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
-        recyclerView = (RecyclerView) rootView;
+        EventBus.getDefault().post(new ErrorEvent(ErrorEvent.LOADING));
+        RecyclerView recyclerView = (RecyclerView) rootView;
         recyclerView.setHasFixedSize(true);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
@@ -110,12 +118,40 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             String key = args.getString(SEARCH_KEY, "");
             loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.buildSearchUri(key), null, null, null,
                     CvBContract.PostsEntry._ID + " DESC");
+        } else if (id == USER_POSTS_LOADER) {
+            User user = CvBApp.getInstance().getUserExtra();
+            if (user == null) {
+                return null;
+            }
+            Map<String, Boolean> posts = user.getPosts();
+            if (posts == null) {
+                return null;
+            }
+            Set<String> keys = posts.keySet();
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            for (String key : keys) {
+                sb.append("'").append(key).append("' ").append(",");
+            }
+            String argsString = sb.substring(0, sb.length() - 2) + ")";
+            CvBUtil.log(argsString);
+            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null,
+                    CvBContract.PostsEntry.COLUMN_SERVER_ID + " IN " + argsString,
+                    null,
+                    CvBContract.PostsEntry._ID + " DESC");
         }
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        User user = CvBApp.getInstance().getUserExtra();
+        if (user == null) {
+            EventBus.getDefault().post(new ErrorEvent(ErrorEvent.ERROR_USER_LOADING));
+        } else if (data.getCount() == 0) {
+            EventBus.getDefault().post(new ErrorEvent(ErrorEvent.ERROR_NO_POSTS));
+        }
+        //TODO: Check for network connection also
         adapter.swapCursor(data);
     }
 
@@ -151,7 +187,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             Bundle b = new Bundle();
             b.putString(SEARCH_KEY, searchText);
             getLoaderManager().restartLoader(ALL_SEARCH_LOADER, b, this);
-        } else {
+        } else { 
             getLoaderManager().restartLoader(type, null, this);
         }
     }

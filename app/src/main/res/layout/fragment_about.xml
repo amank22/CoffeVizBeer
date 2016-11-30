@@ -4,12 +4,9 @@
     android:layout_height="match_parent"
     tools:context="com.qurux.coffeevizbeer.ui.fragments.AboutFragment">
 
-
-    <android.support.v7.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/posts_recyclerView"
+    <FrameLayout
+        android:id="@+id/frag_container_user_posts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
