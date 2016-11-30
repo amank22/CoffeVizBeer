@@ -12,7 +12,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.qurux.coffeevizbeer.R;
-import com.qurux.coffeevizbeer.app.CvBApp;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -59,7 +58,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (user != null) {
             // Go back to the main activity
             if (this instanceof LoginActivity) {
-                CvBApp.getInstance().setFirebaseListeners();
                 Intent i = new Intent(this, HomeActivity.class);
 //                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(i);

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
+import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.views.ThisThatView;
@@ -34,7 +35,7 @@ import org.greenrobot.eventbus.EventBus;
 public class PostsDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ARG_PARCEL = "content";
-
+    private static final String regex = "Local:avatar[0-9]{1,2}";
     private static final int POST_DETAIL_LOADER = 4556;
     private static final String TAG = "DetailClass";
     private String serverIdText;
@@ -120,11 +121,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(getActivity(), R.drawable.ic_vector_user_black);
         author.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
         descrption.setText(descriptionText);
-        try {
-            thisThatView.setImageToAll(new String[]{linkThisString, linkThatString});
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setImageToThisThatView(linkThisString, linkThatString);
         thisThatView.setBackgroundColor(Color.parseColor(color));
         title.setBackgroundColor(Color.parseColor(color));
         date.setBackgroundColor(Color.parseColor(color));
@@ -138,6 +135,27 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             like.setImageResource(R.drawable.ic_vector_like_red);
         bookmark.setOnClickListener(view -> handleBookmark(serverIdText, bookmarkedInt));
         like.setOnClickListener(view -> handleLike(serverIdText, likedInt));
+    }
+
+    private void setImageToThisThatView(String linkThis, String linkThat) {
+        if (linkThis.matches(regex)) {
+            thisThatView.removeImage(0);
+            int localPos = Character.getNumericValue(linkThis.charAt(linkThis.length() - 2)) * 10 +
+                    Character.getNumericValue(linkThis.charAt(linkThis.length() - 1));
+            thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
+        } else {
+            thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.circle_blue);
+            thisThatView.setImage(0, linkThis);
+        }
+        if (linkThat.matches(regex)) {
+            int localPos = Character.getNumericValue(linkThat.charAt(linkThat.length() - 2)) * 10 +
+                    Character.getNumericValue(linkThat.charAt(linkThat.length() - 1));
+            thisThatView.removeImage(1);
+            thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
+        } else {
+            thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.circle_green);
+            thisThatView.setImage(1, linkThat);
+        }
     }
 
     private void handleBookmark(String serverId, Integer bookmarked) {

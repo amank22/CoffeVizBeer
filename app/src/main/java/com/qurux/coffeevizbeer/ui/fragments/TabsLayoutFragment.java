@@ -69,6 +69,9 @@ public class TabsLayoutFragment extends Fragment {
                     case 1:
                         currentFrag = PostsFragment.newInstance(PostsFragment.ALL_BOOKMARKED_POSTS_LOADER);
                         break;
+                    case 2:
+                        currentFrag = new AboutFragment();
+                        break;
                 }
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.frag_container_tabs, currentFrag)
                         .commit();

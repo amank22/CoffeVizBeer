@@ -196,39 +196,39 @@ public class CvBUtil {
      */
     public static int getAvatarResId(int position) {
         switch (position) {
-            case 1:
-                return R.drawable.ic_avatar1;
-            case 2:
-                return R.drawable.ic_avatar2;
-            case 3:
-                return R.drawable.ic_avatar3;
-            case 4:
-                return R.drawable.ic_avatar4;
-            case 5:
-                return R.drawable.ic_avatar5;
-            case 6:
-                return R.drawable.ic_avatar6;
-            case 7:
-                return R.drawable.ic_avatar7;
-            case 8:
-                return R.drawable.ic_avatar8;
-            case 9:
-                return R.drawable.ic_avatar9;
-            case 10:
-                return R.drawable.ic_avatar10;
             case 11:
-                return R.drawable.ic_avatar11;
+                return R.drawable.ic_avatar1;
             case 12:
-                return R.drawable.ic_avatar12;
+                return R.drawable.ic_avatar2;
             case 13:
-                return R.drawable.ic_avatar13;
+                return R.drawable.ic_avatar3;
             case 14:
-                return R.drawable.ic_avatar14;
+                return R.drawable.ic_avatar4;
             case 15:
-                return R.drawable.ic_avatar15;
+                return R.drawable.ic_avatar5;
             case 16:
-                return R.drawable.ic_avatar16;
+                return R.drawable.ic_avatar6;
             case 17:
+                return R.drawable.ic_avatar7;
+            case 18:
+                return R.drawable.ic_avatar8;
+            case 19:
+                return R.drawable.ic_avatar9;
+            case 20:
+                return R.drawable.ic_avatar10;
+            case 21:
+                return R.drawable.ic_avatar11;
+            case 22:
+                return R.drawable.ic_avatar12;
+            case 23:
+                return R.drawable.ic_avatar13;
+            case 24:
+                return R.drawable.ic_avatar14;
+            case 25:
+                return R.drawable.ic_avatar15;
+            case 26:
+                return R.drawable.ic_avatar16;
+            case 27:
                 return R.drawable.ic_avatar17;
             default:
                 return -1;

@@ -42,8 +42,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public static final int ALL_SEARCH_LOADER = 2;
     private static final String ARG_POST_TYPE = "post_type";
     private static final String SEARCH_KEY = "search_key";
-    RecyclerView recyclerView;
-    // TODO: Rename and change types of parameters
+    private RecyclerView recyclerView;
+
     private int type = ALL_POSTS_LOADER;
     private PostsAdapter adapter;
 

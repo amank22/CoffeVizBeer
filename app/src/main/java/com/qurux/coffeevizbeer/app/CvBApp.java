@@ -32,13 +32,7 @@ public class CvBApp extends Application {
     private static CvBApp sInstance;
     private User userExtra;
 
-    public CvBApp() {
-    }
-
     public static CvBApp getInstance() {
-        if (sInstance == null) {
-            sInstance = new CvBApp();
-        }
         return sInstance;
     }
 
@@ -57,7 +51,6 @@ public class CvBApp extends Application {
                 .setDefaultFontPath("fonts/CharisSILR.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
-        setFirebaseListeners();
         sInstance = this;
     }
 

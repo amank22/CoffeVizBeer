@@ -271,9 +271,9 @@ public class AddPostActivity extends BaseActivity {
     public void onMessageEvent(ItemTapAdapterEvent event) {
         avatarDialog.dismiss();
         int pos = event.getPosition();
-        CvBUtil.log("Adapter Position:" + (pos + 1));
-        int avatarRes = CvBUtil.getAvatarResId(pos + 1);
-        selectedImagePath[position] = String.format(getString(R.string.avatar_local_link_start), pos + 1);
+        CvBUtil.log("Adapter Position:" + (pos + 11));
+        int avatarRes = CvBUtil.getAvatarResId(pos + 11);
+        selectedImagePath[position] = String.format(getString(R.string.avatar_local_link_start), pos + 11);
         CvBUtil.log("Adapter Path:" + selectedImagePath[position]);
         Drawable hack = AppCompatDrawableManager.get().getDrawable(this, avatarRes);
         thisThatView.getHolder().get(position).getHierarchy().setPlaceholderImage(hack);

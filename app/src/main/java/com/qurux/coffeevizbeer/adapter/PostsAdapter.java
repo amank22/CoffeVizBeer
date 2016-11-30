@@ -31,7 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
-    private final String regex = "Local:avatar[0-9]{1,2}";
+    private static final String regex = "Local:avatar[0-9]{1,2}";
     private Cursor dataCursor;
     private Context context;
     private ForegroundColorSpan colorSpan;
@@ -73,22 +73,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.summary.setText(summary);
         holder.thisThatView.setBackgroundColor(Color.parseColor(color));
         holder.title.setBackgroundColor(Color.parseColor(color));
-        if (linkThis.matches(regex)) {
-            holder.thisThatView.removeImage(0);
-            int localPos = Character.getNumericValue(linkThis.charAt(linkThis.length() - 1));
-            holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
-        } else {
-            holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.circle_blue);
-            holder.thisThatView.setImage(0, linkThis);
-        }
-        if (linkThat.matches(regex)) {
-            int localPos = Character.getNumericValue(linkThat.charAt(linkThat.length() - 1));
-            holder.thisThatView.removeImage(1);
-            holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
-        } else {
-            holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.circle_green);
-            holder.thisThatView.setImage(1, linkThat);
-        }
+        setImageToThisThatView(holder, linkThis, linkThat);
         if (bookmarked == 0)
             holder.bookmark.setImageResource(R.drawable.ic_vector_bookmark_black);
         else if (bookmarked == 1)
@@ -102,6 +87,29 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             holder.readmore.setVisibility(View.INVISIBLE);
         } else {
             holder.readmore.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setImageToThisThatView(ViewHolder holder, String linkThis, String linkThat) {
+        if (linkThis.matches(regex)) {
+            holder.thisThatView.removeImage(0);
+            int localPos = Character.getNumericValue(linkThis.charAt(linkThis.length() - 2)) * 10 +
+                    Character.getNumericValue(linkThis.charAt(linkThis.length() - 1));
+            CvBUtil.log("local position OF " + linkThis + ":" + String.valueOf(localPos));
+            holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
+        } else {
+            holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.circle_blue);
+            holder.thisThatView.setImage(0, linkThis);
+        }
+        if (linkThat.matches(regex)) {
+            int localPos = Character.getNumericValue(linkThat.charAt(linkThat.length() - 2)) * 10 +
+                    Character.getNumericValue(linkThat.charAt(linkThat.length() - 1));
+            CvBUtil.log("local position OF THAT  " + linkThat + ":" + String.valueOf(localPos));
+            holder.thisThatView.removeImage(1);
+            holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
+        } else {
+            holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.circle_green);
+            holder.thisThatView.setImage(1, linkThat);
         }
     }
 

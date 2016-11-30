@@ -28,6 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light" />
+
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/title_activity_home"
