@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/posts_recyclerView"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/error_text"
+        style="@style/textViewWithDefaultMargin"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/default_loading_text"
+        android:textSize="@dimen/textSize_normal"
+        android:visibility="invisible" />
+
+    <android.support.v7.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/posts_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</FrameLayout>
 

@@ -9,12 +9,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/error_text"
-        style="@style/textViewWithDefaultMargin"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/default_loading_text"
-        android:textSize="@dimen/textSize_normal" />
-
 </merge>

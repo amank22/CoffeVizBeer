@@ -1,8 +1,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.qurux.coffeevizbeer.ui.fragments.AboutFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_user_profile"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/textSize_normal"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:fadeDuration="300"
+            fresco:placeholderImage="@drawable/round_rect_blue_dark"
+            fresco:roundAsCircle="true"
+            fresco:roundingBorderColor="@color/colorWhite"
+            fresco:roundingBorderWidth="0.5dp" />
+
+        <TextView
+            android:id="@+id/text_user_name"
+            style="@style/CustomStrongFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textSize_normal" />
+
+        <TextView
+            android:id="@+id/text_user_mail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textSize_normal" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/frag_container_user_posts"

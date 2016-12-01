@@ -108,7 +108,9 @@
     <string name="desc_bookmark_button">Bookmark Button</string>
     <string name="desc_like_button">Like Button</string>
     <string name="title_activity_detail">Detail</string>
-    <string name="search_hint">Search an unthinkable post</string>
+    <string name="search_hint">Search a public post</string>
+    <string name="search_hint_bookmark">Search a bookmarked post</string>
+    <string name="search_hint_about">Search your post</string>
     <string name="new_post_hint_text">A story can be of anything which you thought is not a match but still it was. It could be a story of you and your crush or maybe a new food or drink combination you made last night which tastes awesome. Feel free to write anything. Add photos and text below.</string>
     <string name="post_title_hint_this">This</string>
     <string name="post_title_hint_that">That</string>
@@ -133,8 +135,8 @@
     <string name="error_summary_min">Summary must be atleast 20 characters long</string>
     <string name="error_photos_set">Photos must be set</string>
     <string name="error_no_internet">My world seems to be disconnected to internet</string>
-    <string name="error_no_posts">I feel alone here</string>
-    <string name="error_user_loading">I am still looking for you</string>
+    <string name="error_no_posts">I feel alone here\nAdd Something</string>
+    <string name="error_user_loading">I am still looking for you in my server</string>
     <string name="error_unknown">Something happened which even i don\'t know</string>
 
 </resources>

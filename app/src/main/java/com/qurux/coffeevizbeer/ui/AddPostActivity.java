@@ -141,14 +141,14 @@ public class AddPostActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (i1 == 0 && charSequence.length() > 0) {
+                CvBUtil.log(charSequence + ":" + i + ":" + i1 + ":" + i2);
+                if (i1 == 0 && (charSequence.length() > 1 || (charSequence.length() == 1 && charSequence.charAt(0) == ' '))) {
                     watchText.setError(getString(R.string.error_title_space));
                 }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
     }

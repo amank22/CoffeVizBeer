@@ -16,6 +16,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.adapter.PostsAdapter;
@@ -53,6 +54,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private int type = ALL_POSTS_LOADER;
     private PostsAdapter adapter;
+    private TextView errorText;
 
     public PostsFragment() {
         // Required empty public constructor
@@ -93,8 +95,9 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
-        EventBus.getDefault().post(new ErrorEvent(ErrorEvent.LOADING));
-        RecyclerView recyclerView = (RecyclerView) rootView;
+        errorText = (TextView) rootView.findViewById(R.id.error_text);
+        handleError(new ErrorEvent(ErrorEvent.LOADING));
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.posts_recyclerView);
         recyclerView.setHasFixedSize(true);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
@@ -146,12 +149,15 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         User user = CvBApp.getInstance().getUserExtra();
-        if (user == null) {
-            EventBus.getDefault().post(new ErrorEvent(ErrorEvent.ERROR_USER_LOADING));
+        if (data.getCount() == 0 && !CvBUtil.isConnectedToInternet(getContext())) {
+            handleError(new ErrorEvent(ErrorEvent.ERROR_NO_NETWORK));
+        } else if (user == null && type == USER_POSTS_LOADER) {
+            handleError(new ErrorEvent(ErrorEvent.ERROR_USER_LOADING));
         } else if (data.getCount() == 0) {
-            EventBus.getDefault().post(new ErrorEvent(ErrorEvent.ERROR_NO_POSTS));
+            handleError(new ErrorEvent(ErrorEvent.ERROR_NO_POSTS));
+        } else {
+            handleError(new ErrorEvent(ErrorEvent.DEFAULT));
         }
-        //TODO: Check for network connection also
         adapter.swapCursor(data);
     }
 
@@ -187,7 +193,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             Bundle b = new Bundle();
             b.putString(SEARCH_KEY, searchText);
             getLoaderManager().restartLoader(ALL_SEARCH_LOADER, b, this);
-        } else { 
+        } else {
             getLoaderManager().restartLoader(type, null, this);
         }
     }
@@ -229,5 +235,10 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             newLike = 0;
         }
         FireBaseHelper.firebaseLike(getContext(), serverId, newLike);
+    }
+
+    public void handleError(ErrorEvent event) {
+        CvBUtil.log("for type:" + type + " error:" + event.getError());
+        event.setError(getContext(), event.getError(), errorText);
     }
 }

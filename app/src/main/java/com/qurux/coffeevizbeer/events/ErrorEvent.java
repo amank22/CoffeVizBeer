@@ -1,7 +1,5 @@
 package com.qurux.coffeevizbeer.events;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatDrawableManager;
@@ -20,7 +18,8 @@ public class ErrorEvent {
     public static final int ERROR_NO_POSTS = 1;
     public static final int ERROR_USER_LOADING = 2;
     public static final int ERROR_UNKNOWN = 3;
-    public static final int LOADING = -1;
+    public static final int LOADING = 5;
+    public static final int DEFAULT = -1;
 
     private int error;
 
@@ -55,6 +54,7 @@ public class ErrorEvent {
             case LOADING:
                 message = context.getString(R.string.default_loading_text);
                 resId = R.drawable.ic_loading;
+                break;
             default:
                 message = null;
                 resId = R.drawable.ic_loading;
@@ -70,17 +70,12 @@ public class ErrorEvent {
 
     private void makeViewVisible(View view) {
         view.setVisibility(View.VISIBLE);
-        view.animate().alpha(1);
+        view.animate().alpha(1).start();
     }
 
     private void makeViewHide(View view) {
-        view.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                view.setVisibility(View.GONE);
-            }
-        });
+        view.animate().alpha(0).start();
+        view.setVisibility(View.GONE);
     }
 
 }

@@ -7,8 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
+import com.qurux.coffeevizbeer.helper.CvBUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +33,19 @@ public class AboutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frag_container_user_posts, PostsFragment.newInstance(PostsFragment.USER_POSTS_LOADER)).commit();
+        Fragment oldFrag = getChildFragmentManager().findFragmentByTag("frag_user_posts");
+        CvBUtil.log("Old Frag:" + (oldFrag == null));
+        if (oldFrag == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.frag_container_user_posts, PostsFragment.newInstance(PostsFragment.USER_POSTS_LOADER),
+                            "frag_user_posts").commit();
+        } else {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.frag_container_user_posts, oldFrag, "frag_user_posts").commit();
+        }
+        SimpleDraweeView userImage = (SimpleDraweeView) view.findViewById(R.id.image_user_profile);
+        userImage.setImageURI(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
+        ((TextView) view.findViewById(R.id.text_user_name)).setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        ((TextView) view.findViewById(R.id.text_user_mail)).setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 }
