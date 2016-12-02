@@ -32,11 +32,21 @@ import java.io.OutputStream;
 
 public class CvBUtil {
 
-
+    /**
+     * Print a log debug message with default key.
+     *
+     * @param msg    String to print on debug logcat.
+     */
     public static void log(String msg) {
         Log.d("Aman", msg);
     }
 
+    /**
+     * Checks whether the device is connected to internet or not.
+     *
+     * @param context    Context to get system services
+     * @return boolean   true if connected else false.
+     */
     public static boolean isConnectedToInternet(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -75,7 +85,13 @@ public class CvBUtil {
         }
     }
 
-
+    /**
+     * Checks whether the device is connected to internet or not.
+     *
+     * @param context    Context to pass to dialog
+     * @param message    String message to show in dialog
+     * @param okListener    Ok Button Listener
+     */
     private static void showMessageOKCancel(Context context, String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(context)
                 .setMessage(message)
@@ -88,7 +104,8 @@ public class CvBUtil {
     /**
      * Compress the file and return the compressed photo
      *
-     * @return photoFile
+     * @param photoFile File to compress
+     * @return photoFile 
      */
     public static File PhotoCompressor(File photoFile) {
         Bitmap b = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
@@ -140,6 +157,13 @@ public class CvBUtil {
         return photoFile;
     }
 
+    /**
+     * Straighten the Bitmap
+     *
+     * @param bitmap Bitmap to compress
+     * @param absPath Absolute path of the file
+     * @return photoFile
+     */
     public static Bitmap straightenFile(Bitmap bitmap, String absPath) throws IOException {
         int rotate = 0;
         try {
@@ -169,10 +193,24 @@ public class CvBUtil {
         return bitmap;
     }
 
+     /**
+     * Checks whether the link is local.
+     * Local String is of format Local:avatar{1-20}
+     *
+     * @param context    Context
+     * @param link    String link of check
+     * @return boolean   true if local else false.
+     */
     public static boolean checkLocalRegex(Context context, String link) {
         return link.matches(context.getString(R.string.regex_local));
     }
 
+     /**
+     * Copy a file from source to destination.
+     *
+     * @param src    Source File
+     * @param dst    Destination File
+     */
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
@@ -187,6 +225,12 @@ public class CvBUtil {
         out.close();
     }
 
+     /**
+     * Creates a temporary file in external dir of app.
+     *
+     * @param context    Context
+     * @return File temporary empty file
+     */
     public static File createDestinationFile(Context context) throws IOException {
         // Create an image file name
         String imageFileName = "JPEG_";
