@@ -125,6 +125,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         thisThatView.setBackgroundColor(Color.parseColor(color));
         title.setBackgroundColor(Color.parseColor(color));
         date.setBackgroundColor(Color.parseColor(color));
+        setStatusBarColor(Color.parseColor(color));
         if (bookmarkedInt == 0)
             bookmark.setImageResource(R.drawable.ic_vector_bookmark_black);
         else if (bookmarkedInt == 1)
@@ -135,6 +136,16 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             like.setImageResource(R.drawable.ic_vector_like_red);
         bookmark.setOnClickListener(view -> handleBookmark(serverIdText, bookmarkedInt));
         like.setOnClickListener(view -> handleLike(serverIdText, likedInt));
+    }
+    
+    private void setStatusBarColor(int color){
+     Window window = activity.getWindow();
+    // clear FLAG_TRANSLUCENT_STATUS flag:
+    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+    // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    // finally change the color
+    window.setStatusBarColor(color);   
     }
 
     private void setImageToThisThatView(String linkThis, String linkThat) {
