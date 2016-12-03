@@ -138,5 +138,6 @@
     <string name="error_no_posts">I feel alone here\nAdd Something</string>
     <string name="error_user_loading">I am still looking for you in my server</string>
     <string name="error_unknown">Something happened which even i don\'t know</string>
+    <string name="send_to_title">Share the vizo</string>
 
 </resources>

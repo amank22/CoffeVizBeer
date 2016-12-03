@@ -169,6 +169,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_BOOKMARKED, dataCursor));
             } else if (view.getId() == readmore.getId()) {
                 EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_READMORE, dataCursor));
+            } else if (view.getId() == share.getId()) {
+                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_SHARE, dataCursor));
             }
         }
     }

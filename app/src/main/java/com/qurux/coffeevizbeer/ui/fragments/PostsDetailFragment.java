@@ -2,6 +2,7 @@ package com.qurux.coffeevizbeer.ui.fragments;
 
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -23,6 +24,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
@@ -50,6 +53,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
     private TextView date;
     private ThisThatView thisThatView;
     private CollapsingToolbarLayout toolbarLayout;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public PostsDetailFragment() {
         // Required empty public constructor
@@ -70,6 +74,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             _id = getArguments().getInt(ARG_PARCEL);
             Log.d(TAG, "onCreate: " + _id);
         }
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Override
@@ -141,6 +146,22 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             like.setImageResource(R.drawable.ic_vector_like_red);
         bookmark.setOnClickListener(view -> handleBookmark(serverIdText, bookmarkedInt));
         like.setOnClickListener(view -> handleLike(serverIdText, likedInt));
+        share.setOnClickListener(view -> {
+            
+            String summary = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SUMMARY));
+            String title = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_TITLE));
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, title + "\n\n" + summary + "\n\n" +
+                    "Check out more such amazing and weird combo's only on Coffee viz Beer.");
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to_title)));
+            Bundle bundle1 = new Bundle();
+            bundle1.putString("postId", serverIdText);
+            bundle1.putInt("shared", 1);
+            bundle1.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            mFirebaseAnalytics.logEvent("event_shared", bundle1);
+        });
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -183,6 +204,11 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             newBookmarked = 0;
         }
         FireBaseHelper.firebaseBookmark(getContext(), serverId, newBookmarked);
+        Bundle bundle1 = new Bundle();
+        bundle1.putString("postId", serverId);
+        bundle1.putInt("bookmarked", newBookmarked);
+        bundle1.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        mFirebaseAnalytics.logEvent("event_bookmark", bundle1);
     }
 
     private void handleLike(String serverId, Integer liked) {
@@ -193,6 +219,11 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
             newLike = 0;
         }
         FireBaseHelper.firebaseLike(getContext(), serverId, newLike);
+        Bundle bundle = new Bundle();
+        bundle.putString("postId", serverId);
+        bundle.putInt("liked", newLike);
+        bundle.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        mFirebaseAnalytics.logEvent("event_like", bundle);
     }
 
     @Override

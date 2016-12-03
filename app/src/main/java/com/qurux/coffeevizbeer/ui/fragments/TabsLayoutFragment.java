@@ -114,14 +114,6 @@ public class TabsLayoutFragment extends Fragment {
         });
     }
 
-    public ViewPagerAdapter getAdapter() {
-        return adapter;
-    }
-
-    public int getCurrentPos() {
-        return currentPos;
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -144,9 +136,6 @@ public class TabsLayoutFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                CvBUtil.log(s + ":" + start + ":" + before + ":" + count + ":");
-                //ch:2:1:0:
-                //gu:1:0:1:
                 if ((before == 0 && start > 1) || (before == 1 && start > 2)) {
                     EventBus.getDefault().post(new SearchEvent(s.toString()));
                 } else if (before == 1 && start == 2) {

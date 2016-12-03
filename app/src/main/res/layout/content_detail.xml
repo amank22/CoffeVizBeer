@@ -16,9 +16,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/text_margin_half"
+            android:background="@color/colorWhite"
             android:paddingBottom="@dimen/text_margin_half"
-            android:background="@color/colorWhite">
+            android:paddingTop="@dimen/text_margin_half">
 
             <TextView
                 android:id="@+id/post_item_author"
@@ -27,7 +27,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:drawablePadding="@dimen/text_margin_half"
-                android:textColor="@android:color/black"
+                android:textColor="@color/colorTextGreyLight"
                 android:textSize="@dimen/textSize_normal" />
 
             <ImageButton
@@ -73,6 +73,7 @@
             android:layout_marginBottom="@dimen/text_margin_half"
             android:layout_marginTop="@dimen/text_margin_half"
             android:text="@string/large_text"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/textSize_normal" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

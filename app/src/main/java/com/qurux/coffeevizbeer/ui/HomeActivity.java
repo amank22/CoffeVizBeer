@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.app.CvBApp;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
@@ -22,17 +24,18 @@ public class HomeActivity extends BaseActivity {
     private static final String tag = "tabLayout";
     //TODO: Handle cases for tablets also.
     boolean isTablet = false;
-    private TabsLayoutFragment fragmentByTag;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         CvBApp.getInstance().setFirebaseListeners();
 //        Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
 //        startActivity(dbmanager);
         FrameLayout detailContainer = (FrameLayout) findViewById(R.id.container_details);
         isTablet = detailContainer != null;
-        fragmentByTag = (TabsLayoutFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        TabsLayoutFragment fragmentByTag = (TabsLayoutFragment) getSupportFragmentManager().findFragmentByTag(tag);
         if (fragmentByTag == null) {
             fragmentByTag = new TabsLayoutFragment();
         }
@@ -61,7 +64,23 @@ public class HomeActivity extends BaseActivity {
             case ItemTapEvent.TAP_READMORE:
                 handleReadMore(dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry._ID)));
                 break;
+            case ItemTapEvent.TAP_SHARE:
+                String summary = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SUMMARY));
+                String title = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_TITLE));
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, title + "\n\n" + summary + "\n\n" +
+                        "Check out more such amazing and weird combo's only on Coffee viz Beer.");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to_title)));
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("postId", serverId);
+                bundle1.putInt("shared", 1);
+                bundle1.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                mFirebaseAnalytics.logEvent("event_shared", bundle1);
+                break;
         }
+
 
     }
 
@@ -84,6 +103,11 @@ public class HomeActivity extends BaseActivity {
             newBookmarked = 0;
         }
         FireBaseHelper.firebaseBookmark(this, serverId, newBookmarked);
+        Bundle bundle1 = new Bundle();
+        bundle1.putString("postId", serverId);
+        bundle1.putInt("bookmarked", newBookmarked);
+        bundle1.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        mFirebaseAnalytics.logEvent("event_bookmark", bundle1);
     }
 
     private void handleLike(String serverId, Integer liked) {
@@ -94,6 +118,11 @@ public class HomeActivity extends BaseActivity {
             newLike = 0;
         }
         FireBaseHelper.firebaseLike(this, serverId, newLike);
+        Bundle bundle = new Bundle();
+        bundle.putString("postId", serverId);
+        bundle.putInt("liked", newLike);
+        bundle.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        mFirebaseAnalytics.logEvent("event_like", bundle);
     }
 
     @Override
