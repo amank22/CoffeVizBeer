@@ -1,5 +1,6 @@
 package com.qurux.coffeevizbeer.ui.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -9,14 +10,18 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.SearchEvent;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
@@ -56,7 +61,7 @@ public class TabsLayoutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
+        RelativeLayout toolbar = (RelativeLayout) view.findViewById(R.id.toolbar);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             toolbar.setVisibility(View.GONE);
         } else {
@@ -75,7 +80,52 @@ public class TabsLayoutFragment extends Fragment {
 
             }
         }
-        searchEditText();
+        searchBox.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (searchBox.getText().length() > 2) {
+                    searchBox.setCompoundDrawablesWithIntrinsicBounds(null, null, AppCompatDrawableManager.get().getDrawable(getContext(),
+                            R.drawable.ic_vector_remove), null);
+                    EventBus.getDefault().post(new SearchEvent(searchBox.getText().toString()));
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putString(FirebaseAnalytics.Param.SEARCH_TERM, searchBox.getText().toString());
+                    bundle1.putString("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    FirebaseAnalytics.getInstance(getContext()).logEvent(FirebaseAnalytics.Event.SEARCH, bundle1);
+                } else if (searchBox.getText().length() == 2) {
+                    EventBus.getDefault().post(new SearchEvent(null));
+                    searchBox.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                }
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+                searchBox.clearFocus();
+                return true;
+            }
+            return false;
+        });
+        searchBox.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP && searchBox.getCompoundDrawables()[2] != null) {
+                final int bound = searchBox.getRight() - searchBox.getPaddingRight() - searchBox.getCompoundDrawables()[2].getBounds().width();
+                if (event.getRawX() >= bound) {
+                    clearSearch();
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    private void clearSearch() {
+        EventBus.getDefault().post(new SearchEvent(null));
+        searchBox.setText(null);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+        searchBox.clearFocus();
+        searchBox.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+    }
+
+    private boolean onClickSearch(final MotionEvent event) {
+        // do something
+        event.setAction(MotionEvent.ACTION_CANCEL);
+        return false;
     }
 
     private void setupTabLayout(View view) {
@@ -91,13 +141,13 @@ public class TabsLayoutFragment extends Fragment {
                 CvBUtil.log("Current Select:" + currentPos);
                 switch (tab.getPosition()) {
                     case 0:
-                        searchBox.setText(R.string.search_hint);
+                        searchBox.setHint(R.string.search_hint);
                         break;
                     case 1:
-                        searchBox.setText(R.string.search_hint_bookmark);
+                        searchBox.setHint(R.string.search_hint_bookmark);
                         break;
                     case 2:
-                        searchBox.setText(R.string.search_hint_about);
+                        searchBox.setHint(R.string.search_hint_about);
                         break;
                 }
             }
@@ -125,29 +175,6 @@ public class TabsLayoutFragment extends Fragment {
         adapter.addFragment(PostsFragment.newInstance(PostsFragment.ALL_BOOKMARKED_POSTS_LOADER));
         adapter.addFragment(new AboutFragment());
         viewPager.setAdapter(adapter);
-    }
-
-    private void searchEditText() {
-        searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if ((before == 0 && start > 1) || (before == 1 && start > 2)) {
-                    EventBus.getDefault().post(new SearchEvent(s.toString()));
-                } else if (before == 1 && start == 2) {
-                    EventBus.getDefault().post(new SearchEvent(null));
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
     }
 
     public static class ViewPagerAdapter extends SmartFragmentStatePagerAdapter {
