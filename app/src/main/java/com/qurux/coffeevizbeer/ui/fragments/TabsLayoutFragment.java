@@ -39,7 +39,13 @@ public class TabsLayoutFragment extends Fragment {
     private ViewPager viewPager;
     private EditText searchBox;
     private int currentPos = 0;
-    private boolean isOrientationChanged = false;
+    private ViewPagerAdapter adapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new ViewPagerAdapter(getChildFragmentManager());
+    }
 
     @Nullable
     @Override
@@ -56,36 +62,24 @@ public class TabsLayoutFragment extends Fragment {
         } else {
             toolbar.setVisibility(View.VISIBLE);
         }
-
-        if (savedInstanceState != null) {
-            currentPos = savedInstanceState.getInt(KEY_TAB_CURRENT, 0);
-            if (currentPos != 0) {
-                isOrientationChanged = true;
-            }
-        }
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> startActivity(new Intent(getActivity(), AddPostActivity.class)));
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_tabs);
         setupViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (isOrientationChanged) {
-                    viewPager.setCurrentItem(currentPos);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         searchBox = (EditText) view.findViewById(R.id.editTextSearch);
+        setupTabLayout(view);
+        if (savedInstanceState != null) {
+            currentPos = savedInstanceState.getInt(KEY_TAB_CURRENT, 0);
+            if (currentPos != 0) {
+//                tabLayout.getTabAt(currentPos).select();
+                viewPager.setCurrentItem(currentPos, true);
+
+            }
+        }
+        searchEditText();
+    }
+
+    private void setupTabLayout(View view) {
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_vector_home);
@@ -95,7 +89,7 @@ public class TabsLayoutFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentPos = tab.getPosition();
-                CvBUtil.log("Current:" + currentPos);
+                CvBUtil.log("Current Select:" + currentPos);
                 switch (tab.getPosition()) {
                     case 0:
                         searchBox.setText(R.string.search_hint);
@@ -119,8 +113,6 @@ public class TabsLayoutFragment extends Fragment {
 
             }
         });
-
-        searchEditText();
     }
 
     @Override
@@ -130,7 +122,6 @@ public class TabsLayoutFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         adapter.addFragment(PostsFragment.newInstance());
         adapter.addFragment(PostsFragment.newInstance(PostsFragment.ALL_BOOKMARKED_POSTS_LOADER));
         adapter.addFragment(new AboutFragment());

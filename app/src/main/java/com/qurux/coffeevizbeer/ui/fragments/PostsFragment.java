@@ -1,10 +1,10 @@
 package com.qurux.coffeevizbeer.ui.fragments;
 
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -25,11 +25,11 @@ import com.qurux.coffeevizbeer.bean.User;
 import com.qurux.coffeevizbeer.events.ErrorEvent;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
+import com.qurux.coffeevizbeer.events.ReadMoreEvent;
 import com.qurux.coffeevizbeer.events.SearchEvent;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
-import com.qurux.coffeevizbeer.ui.DetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,10 +51,14 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     public static final int USER_POSTS_LOADER = 3;
     private static final String ARG_POST_TYPE = "post_type";
     private static final String SEARCH_KEY = "search_key";
-
+    private static final String POSITION_KEY = "position_key";
+    private static final String SAVED_LAYOUT_MANAGER = "saved_layout_manager";
+    private RecyclerView.LayoutManager layoutManager;
     private int type = ALL_POSTS_LOADER;
     private PostsAdapter adapter;
     private TextView errorText;
+    private int oldPosition = 0;
+    private Parcelable layoutManagerSavedState;
 
     public PostsFragment() {
         // Required empty public constructor
@@ -78,6 +82,7 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         if (getArguments() != null) {
             type = getArguments().getInt(ARG_POST_TYPE);
         }
+//        setRetainInstance(true);
     }
 
     @Override
@@ -100,11 +105,34 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.posts_recyclerView);
         recyclerView.setHasFixedSize(true);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        } else
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(layoutManager);
+        } else {
+            layoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(layoutManager);
+        }
         adapter = new PostsAdapter(getActivity(), null);
         recyclerView.setAdapter(adapter);
+        if (savedInstanceState != null) {
+            type = savedInstanceState.getInt(ARG_POST_TYPE, ALL_POSTS_LOADER);
+            oldPosition = savedInstanceState.getInt(POSITION_KEY + "_" + type, 0);
+            layoutManagerSavedState = savedInstanceState.getParcelable(SAVED_LAYOUT_MANAGER);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_LAYOUT_MANAGER, layoutManager.onSaveInstanceState());
+        outState.putInt(ARG_POST_TYPE, type);
+        if (layoutManager instanceof LinearLayoutManager)
+            outState.putInt(POSITION_KEY + "_" + type, ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition());
+        else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            int spanPositions[] = new int[2];
+            spanPositions = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(spanPositions);
+            final int min = Math.min(Math.max(0, spanPositions[0]), Math.max(0, spanPositions[1]));
+            outState.putInt(POSITION_KEY + "_" + type, min);
+        }
     }
 
     @Override
@@ -159,6 +187,16 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             handleError(new ErrorEvent(ErrorEvent.DEFAULT));
         }
         adapter.swapCursor(data);
+        if (oldPosition > 0) {
+            layoutManager.scrollToPosition(oldPosition);
+        }
+        restoreLayoutManagerPosition();
+    }
+
+    private void restoreLayoutManagerPosition() {
+        if (layoutManagerSavedState != null) {
+            layoutManager.onRestoreInstanceState(layoutManagerSavedState);
+        }
     }
 
     @Override
@@ -205,14 +243,17 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         int liked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LIKED));
         int bookmarked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_BOOKMARKED));
         String serverId = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SERVER_ID));
-        if (event.getTapType() == ItemTapEvent.TAP_LIKED) {
-            handleLike(serverId, liked);
-        } else if (event.getTapType() == ItemTapEvent.TAP_BOOKMARKED) {
-            handleBookmark(serverId, bookmarked);
-        } else if (event.getTapType() == ItemTapEvent.TAP_READMORE) {
-            Intent i = new Intent(getActivity(), DetailActivity.class);
-            i.putExtra(DetailActivity.KEY_ID, dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry._ID)));
-            startActivity(i);
+        switch (event.getTapType()) {
+            case ItemTapEvent.TAP_LIKED:
+                handleLike(serverId, liked);
+                break;
+            case ItemTapEvent.TAP_BOOKMARKED:
+                handleBookmark(serverId, bookmarked);
+                break;
+            case ItemTapEvent.TAP_READMORE:
+                EventBus.getDefault().post(
+                        new ReadMoreEvent(dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry._ID))));
+                break;
         }
 
     }

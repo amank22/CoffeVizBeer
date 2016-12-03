@@ -1,9 +1,11 @@
 package com.qurux.coffeevizbeer.ui.fragments;
 
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,17 +17,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.qurux.coffeevizbeer.R;
-import com.qurux.coffeevizbeer.events.ItemTapEvent;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.views.ThisThatView;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -137,15 +138,16 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         bookmark.setOnClickListener(view -> handleBookmark(serverIdText, bookmarkedInt));
         like.setOnClickListener(view -> handleLike(serverIdText, likedInt));
     }
-    
-    private void setStatusBarColor(int color){
-     Window window = activity.getWindow();
-    // clear FLAG_TRANSLUCENT_STATUS flag:
-    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-    // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-    // finally change the color
-    window.setStatusBarColor(color);   
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStatusBarColor(int color) {
+        Window window = getActivity().getWindow();
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // finally change the color
+        window.setStatusBarColor(color);
     }
 
     private void setImageToThisThatView(String linkThis, String linkThat) {
@@ -192,26 +194,5 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         //Nothing in here
-    }
-
-
-    private void handleBookmark() {
-        int newBookmarked = 0;
-        if (bookmarkedInt == 0) {
-            newBookmarked = 1;
-        } else if (bookmarkedInt == 1) {
-            newBookmarked = 0;
-        }
-        EventBus.getDefault().post(new ItemTapEvent(ItemTapEvent.TAP_BOOKMARKED, serverIdText, newBookmarked));
-    }
-
-    private void handleLike() {
-        int newLike = 0;
-        if (likedInt == 0) {
-            newLike = 1;
-        } else if (likedInt == 1) {
-            newLike = 0;
-        }
-        EventBus.getDefault().post(new ItemTapEvent(ItemTapEvent.TAP_LIKED, serverIdText, newLike));
     }
 }
