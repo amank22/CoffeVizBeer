@@ -20,9 +20,14 @@ public class DetailActivity extends BaseActivity {
             getSupportActionBar().setTitle(null);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        if (_id != -1)
+        if (_id != -1) {
+            PostsDetailFragment frag = (PostsDetailFragment) getSupportFragmentManager().findFragmentByTag("Detail_frag");
+            if (frag == null) {
+                frag = PostsDetailFragment.newInstance(_id);
+            }
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_details, PostsDetailFragment.newInstance(_id)).commit();
+                    .replace(R.id.container_details, frag, "Detail_frag").commit();
+        }
     }
 
     @Override

@@ -71,7 +71,6 @@ public class TabsLayoutFragment extends Fragment {
         if (savedInstanceState != null) {
             currentPos = savedInstanceState.getInt(KEY_TAB_CURRENT, 0);
             if (currentPos != 0) {
-//                tabLayout.getTabAt(currentPos).select();
                 viewPager.setCurrentItem(currentPos, true);
 
             }
@@ -115,6 +114,14 @@ public class TabsLayoutFragment extends Fragment {
         });
     }
 
+    public ViewPagerAdapter getAdapter() {
+        return adapter;
+    }
+
+    public int getCurrentPos() {
+        return currentPos;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -154,7 +161,7 @@ public class TabsLayoutFragment extends Fragment {
         });
     }
 
-    private static class ViewPagerAdapter extends SmartFragmentStatePagerAdapter {
+    public static class ViewPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
 
         ViewPagerAdapter(FragmentManager manager) {

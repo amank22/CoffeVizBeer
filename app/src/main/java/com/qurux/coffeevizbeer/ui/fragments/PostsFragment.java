@@ -23,12 +23,8 @@ import com.qurux.coffeevizbeer.adapter.PostsAdapter;
 import com.qurux.coffeevizbeer.app.CvBApp;
 import com.qurux.coffeevizbeer.bean.User;
 import com.qurux.coffeevizbeer.events.ErrorEvent;
-import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
-import com.qurux.coffeevizbeer.events.ItemTapEvent;
-import com.qurux.coffeevizbeer.events.ReadMoreEvent;
 import com.qurux.coffeevizbeer.events.SearchEvent;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
-import com.qurux.coffeevizbeer.helper.FireBaseHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 
 import org.greenrobot.eventbus.EventBus;
@@ -207,21 +203,13 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onStart() {
         super.onStart();
-        try {
-            EventBus.getDefault().register(this);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        try {
-            EventBus.getDefault().unregister(this);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -236,46 +224,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(ItemTapAdapterEvent event) {
-        int position = event.getPosition();
-        Cursor dataCursor = adapter.getCursorAtPosition(position);
-        int liked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LIKED));
-        int bookmarked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_BOOKMARKED));
-        String serverId = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SERVER_ID));
-        switch (event.getTapType()) {
-            case ItemTapEvent.TAP_LIKED:
-                handleLike(serverId, liked);
-                break;
-            case ItemTapEvent.TAP_BOOKMARKED:
-                handleBookmark(serverId, bookmarked);
-                break;
-            case ItemTapEvent.TAP_READMORE:
-                EventBus.getDefault().post(
-                        new ReadMoreEvent(dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry._ID))));
-                break;
-        }
-
-    }
-
-    private void handleBookmark(String serverId, Integer bookmarked) {
-        int newBookmarked = 0;
-        if (bookmarked == 0) {
-            newBookmarked = 1;
-        } else if (bookmarked == 1) {
-            newBookmarked = 0;
-        }
-        FireBaseHelper.firebaseBookmark(getContext(), serverId, newBookmarked);
-    }
-
-    private void handleLike(String serverId, Integer liked) {
-        int newLike = 0;
-        if (liked == 0) {
-            newLike = 1;
-        } else if (liked == 1) {
-            newLike = 0;
-        }
-        FireBaseHelper.firebaseLike(getContext(), serverId, newLike);
+    public PostsAdapter getAdapter() {
+        return adapter;
     }
 
     public void handleError(ErrorEvent event) {

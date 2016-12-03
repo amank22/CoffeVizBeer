@@ -135,7 +135,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         return dataCursor;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView title, author, summary, readmore;
         ImageButton like, bookmark, share;
         ThisThatView thisThatView;
@@ -154,17 +154,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             bookmark.setOnClickListener(this);
             share.setOnClickListener(this);
             readmore.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View view) {
+            final int adapterPosition = getAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION) {
+                return;
+            }
+            dataCursor.moveToPosition(adapterPosition);
             if (view.getId() == like.getId()) {
-                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_LIKED, getAdapterPosition()));
+                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_LIKED, dataCursor));
             } else if (view.getId() == bookmark.getId()) {
-                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_BOOKMARKED, getAdapterPosition()));
+                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_BOOKMARKED, dataCursor));
             } else if (view.getId() == readmore.getId()) {
-                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_READMORE, getAdapterPosition()));
+                EventBus.getDefault().post(new ItemTapAdapterEvent(ItemTapEvent.TAP_READMORE, dataCursor));
             }
         }
     }

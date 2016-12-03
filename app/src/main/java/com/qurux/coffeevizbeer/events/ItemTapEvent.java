@@ -10,10 +10,10 @@ import com.qurux.coffeevizbeer.bean.Post;
 
 public class ItemTapEvent {
 
-    public static final int TAP_LIKED = 4;
-    public static final int TAP_BOOKMARKED = 1;
-    public static final int TAP_SHARE = 2;
-    public static final int TAP_READMORE = 3;
+    public static final int TAP_LIKED = 456;
+    public static final int TAP_BOOKMARKED = 156;
+    public static final int TAP_SHARE = 256;
+    public static final int TAP_READMORE = 356;
 
     private int tapType = -1;
     private int state = -1;

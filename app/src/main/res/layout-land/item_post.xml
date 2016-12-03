@@ -28,14 +28,15 @@
         android:id="@+id/post_item_author"
         style="@style/textViewWithDefaultMargin"
         android:drawablePadding="@dimen/text_margin_half"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/textSize_normal" />
+        android:textColor="@color/colorTextGreyLight"
+        android:textSize="@dimen/textSize_semi_small" />
 
     <TextView
         android:id="@+id/post_item_summary"
         style="@style/textViewWithDefaultMargin"
         android:layout_marginBottom="@dimen/text_margin_half"
-        android:textSize="@dimen/textSize_normal" />
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/textSize_semi_small" />
 
     <View
         android:layout_width="match_parent"

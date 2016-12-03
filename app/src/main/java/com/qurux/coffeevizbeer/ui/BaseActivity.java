@@ -78,24 +78,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         checkLoginStatus(mFirebaseAuth.getCurrentUser());
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        try {
-            EventBus.getDefault().register(this);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+    public void registerEvent() {
+        EventBus.getDefault().register(this);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        try {
-            EventBus.getDefault().unregister(this);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+    public void unregisterEvent() {
+        EventBus.getDefault().unregister(this);
     }
 
     protected abstract int getLayoutResource();

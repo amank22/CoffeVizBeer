@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -48,6 +49,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
     private ImageButton like, bookmark, share;
     private TextView date;
     private ThisThatView thisThatView;
+    private CollapsingToolbarLayout toolbarLayout;
 
     public PostsDetailFragment() {
         // Required empty public constructor
@@ -93,6 +95,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         bookmark = (ImageButton) v.findViewById(R.id.button_bookmark);
         share = (ImageButton) v.findViewById(R.id.button_share);
         thisThatView = (ThisThatView) v.findViewById(R.id.this_that_view_item);
+        toolbarLayout = (CollapsingToolbarLayout) v.findViewById(R.id.toolbar_layout);
     }
 
     @Override
@@ -126,6 +129,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         thisThatView.setBackgroundColor(Color.parseColor(color));
         title.setBackgroundColor(Color.parseColor(color));
         date.setBackgroundColor(Color.parseColor(color));
+        toolbarLayout.setContentScrimColor(Color.parseColor(color));
         setStatusBarColor(Color.parseColor(color));
         if (bookmarkedInt == 0)
             bookmark.setImageResource(R.drawable.ic_vector_bookmark_black);

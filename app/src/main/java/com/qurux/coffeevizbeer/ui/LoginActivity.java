@@ -31,7 +31,6 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "Aman";
-    private SignInButton mSignInButton;
     private TextView errorText;
     private ProgressBar loader;
 
@@ -40,7 +39,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         super.onCreate(savedInstanceState);
         spanToTitle();
         // Assign fields
-        mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        SignInButton mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         errorText = (TextView) findViewById(R.id.login_error_text);
         loader = (ProgressBar) findViewById(R.id.login_loader);
 

@@ -242,6 +242,18 @@ public class AddPostActivity extends BaseActivity {
         thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(R.drawable.ic_add_plus);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerEvent();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterEvent();
+    }
+
     private void callDialog(int position) {
         this.position = position;
         FragmentManager fm = getSupportFragmentManager();
