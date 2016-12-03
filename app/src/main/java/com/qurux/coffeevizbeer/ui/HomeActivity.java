@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
@@ -31,6 +32,7 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         CvBApp.getInstance().setFirebaseListeners();
+        MobileAds.initialize(this, getString(R.string.ad_app_id));
 //        Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
 //        startActivity(dbmanager);
         FrameLayout detailContainer = (FrameLayout) findViewById(R.id.container_details);

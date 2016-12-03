@@ -119,6 +119,8 @@
     <string name="add_description">ADD DESCRIPTION</string>
     <string name="button_submit">Post your vizo</string>
     <string name="viz" translatable="false">viz</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3437446276278564/4323364735</string>
+    <string name="ad_app_id" translatable="false">ca-app-pub-3437446276278564~7416431938</string>
     <string name="click_a_photo">Click</string>
     <string name="choose_an_avatar">Avatar</string>
     <string name="choose_from_gallery">Gallery</string>

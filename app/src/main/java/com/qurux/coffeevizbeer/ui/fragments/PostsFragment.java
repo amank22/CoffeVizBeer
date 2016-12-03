@@ -3,6 +3,8 @@ package com.qurux.coffeevizbeer.ui.fragments;
 
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -146,26 +148,8 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.buildSearchUri(key), null, null, null,
                     CvBContract.PostsEntry._ID + " DESC");
         } else if (id == USER_POSTS_LOADER) {
-            User user = CvBApp.getInstance().getUserExtra();
-            if (user == null) {
-                return null;
-            }
-            Map<String, Boolean> posts = user.getPosts();
-            if (posts == null) {
-                return null;
-            }
-            Set<String> keys = posts.keySet();
-            StringBuilder sb = new StringBuilder();
-            sb.append("(");
-            for (String key : keys) {
-                sb.append("'").append(key).append("' ").append(",");
-            }
-            String argsString = sb.substring(0, sb.length() - 2) + ")";
-            CvBUtil.log(argsString);
-            loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null,
-                    CvBContract.PostsEntry.COLUMN_SERVER_ID + " IN " + argsString,
-                    null,
-                    CvBContract.PostsEntry._ID + " DESC");
+            loader = getUserPostsCursorLoader();
+            if (loader == null) return null;
         }
         return loader;
     }
@@ -182,22 +166,54 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         } else {
             handleError(new ErrorEvent(ErrorEvent.DEFAULT));
         }
-        adapter.swapCursor(data);
+        // Create a MatrixCursor filled with the rows you want to add.
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"isAd"});
+        matrixCursor.addRow(new Object[]{1});
+
+        // Merge your existing cursor with the matrixCursor you created.
+        MergeCursor mergeCursor = new MergeCursor(new Cursor[]{matrixCursor, data});
+        adapter.swapCursor(mergeCursor);
         if (oldPosition > 0) {
             layoutManager.scrollToPosition(oldPosition);
         }
         restoreLayoutManagerPosition();
     }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
+    }
+
+    @Nullable
+    private CursorLoader getUserPostsCursorLoader() {
+        CursorLoader loader;
+        User user = CvBApp.getInstance().getUserExtra();
+        if (user == null) {
+            return null;
+        }
+        Map<String, Boolean> posts = user.getPosts();
+        if (posts == null) {
+            return null;
+        }
+        Set<String> keys = posts.keySet();
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        for (String key : keys) {
+            sb.append("'").append(key).append("' ").append(",");
+        }
+        String argsString = sb.substring(0, sb.length() - 2) + ")";
+        CvBUtil.log(argsString);
+        loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.CONTENT_URI, null,
+                CvBContract.PostsEntry.COLUMN_SERVER_ID + " IN " + argsString,
+                null,
+                CvBContract.PostsEntry._ID + " DESC");
+        return loader;
+    }
+
     private void restoreLayoutManagerPosition() {
         if (layoutManagerSavedState != null) {
             layoutManager.onRestoreInstanceState(layoutManagerSavedState);
         }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
     }
 
     @Override

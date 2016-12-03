@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
@@ -29,9 +31,10 @@ import org.greenrobot.eventbus.EventBus;
  * Created by Aman Kapoor on 19-11-2016.
  */
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
+public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String regex = "Local:avatar[0-9]{1,2}";
+    private final AdRequest adRequest;
     private Cursor dataCursor;
     private Context context;
     private ForegroundColorSpan colorSpan;
@@ -42,17 +45,39 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         this.context = context;
         colorSpan = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
         authorDrawable = AppCompatDrawableManager.get().getDrawable(context, R.drawable.ic_vector_user_black);
+        adRequest = new AdRequest.Builder().addTestDevice("E901FC2269CA7A95D88D69E1B1C7B767").build();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_post, parent, false);
-        return new ViewHolder(rootView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case 1:
+                View rootView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_post, parent, false);
+                return new ViewHolder(rootView);
+            case 2:
+                View adView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.admob_layout, parent, false);
+                return new AdViewHolder(adView);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder1, int position) {
+        switch (holder1.getItemViewType()) {
+            case 1:
+                ViewHolder holder = (ViewHolder) holder1;
+                handlePosts(position, holder);
+                break;
+            case 2:
+                AdViewHolder adHolder = (AdViewHolder) holder1;
+                adHolder.adView.loadAd(adRequest);
+                break;
+        }
+    }
+
+    private void handlePosts(int position, ViewHolder holder) {
         dataCursor.moveToPosition(position);
         String title = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_TITLE));
         String author = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_AUTHOR));
@@ -118,6 +143,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         return dataCursor != null ? dataCursor.getCount() : 0;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        dataCursor.moveToPosition(position);
+        if (dataCursor.getColumnIndex("isAd") == -1)
+            return 1;
+        return 2;
+    }
+
     public Cursor swapCursor(Cursor cursor) {
         if (dataCursor == cursor) {
             return null;
@@ -133,6 +166,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     public Cursor getCursorAtPosition(int pos) {
         dataCursor.moveToPosition(pos);
         return dataCursor;
+    }
+
+    class AdViewHolder extends RecyclerView.ViewHolder {
+
+        public AdView adView;
+
+        public AdViewHolder(View itemView) {
+            super(itemView);
+            adView = (AdView) itemView.findViewById(R.id.adView);
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

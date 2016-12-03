@@ -103,7 +103,8 @@ public class TabsLayoutFragment extends Fragment {
         });
         searchBox.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP && searchBox.getCompoundDrawables()[2] != null) {
-                final int bound = searchBox.getRight() - searchBox.getPaddingRight() - searchBox.getCompoundDrawables()[2].getBounds().width();
+                final int bound = searchBox.getRight() - searchBox.getPaddingRight() -
+                        searchBox.getCompoundDrawables()[2].getBounds().width();
                 if (event.getRawX() >= bound) {
                     clearSearch();
                     return true;
@@ -120,12 +121,6 @@ public class TabsLayoutFragment extends Fragment {
         imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
         searchBox.clearFocus();
         searchBox.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-    }
-
-    private boolean onClickSearch(final MotionEvent event) {
-        // do something
-        event.setAction(MotionEvent.ACTION_CANCEL);
-        return false;
     }
 
     private void setupTabLayout(View view) {
