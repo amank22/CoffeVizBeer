@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
@@ -59,6 +61,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 View adView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.admob_layout, parent, false);
                 return new AdViewHolder(adView);
+            case 3:
+                View aboutView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_about_user, parent, false);
+                return new AboutViewHolder(aboutView);
         }
         return null;
     }
@@ -74,6 +80,11 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 AdViewHolder adHolder = (AdViewHolder) holder1;
                 adHolder.adView.loadAd(adRequest);
                 break;
+            case 3:
+                AboutViewHolder aboutViewHolder = (AboutViewHolder) holder1;
+                aboutViewHolder.userImage.setImageURI(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
+                aboutViewHolder.name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                aboutViewHolder.email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         }
     }
 
@@ -148,7 +159,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         dataCursor.moveToPosition(position);
         if (dataCursor.getColumnIndex("isAd") == -1)
             return 1;
-        return 2;
+        else if (dataCursor.getInt(dataCursor.getColumnIndex("isAd")) == 1) {
+            return 2;
+        }
+        return 3;
     }
 
     public Cursor swapCursor(Cursor cursor) {
@@ -168,17 +182,30 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return dataCursor;
     }
 
-    class AdViewHolder extends RecyclerView.ViewHolder {
+    private static class AdViewHolder extends RecyclerView.ViewHolder {
 
-        public AdView adView;
+        AdView adView;
 
-        public AdViewHolder(View itemView) {
+        AdViewHolder(View itemView) {
             super(itemView);
             adView = (AdView) itemView.findViewById(R.id.adView);
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private static class AboutViewHolder extends RecyclerView.ViewHolder {
+
+        SimpleDraweeView userImage;
+        TextView name, email;
+
+        AboutViewHolder(View itemView) {
+            super(itemView);
+            userImage = (SimpleDraweeView) itemView.findViewById(R.id.image_user_profile);
+            name = (TextView) itemView.findViewById(R.id.text_user_name);
+            email = (TextView) itemView.findViewById(R.id.text_user_mail);
+        }
+    }
+
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView title, author, summary, readmore;
         ImageButton like, bookmark, share;
         ThisThatView thisThatView;

@@ -20,9 +20,6 @@ import com.qurux.coffeevizbeer.ui.HomeActivity;
 public class PostsWidget extends AppWidgetProvider {
 
     private static final String REFRESH_ACTION = "com.qurux.coffeevizbeer.appwidget.action.REFRESH";
-    private static final String KEY_NEWDATA = "KEY_NEWDATA";
-
-    private static boolean status = false;
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -88,14 +85,11 @@ public class PostsWidget extends AppWidgetProvider {
             int[] appWidgetIds = mgr.getAppWidgetIds(cn);
             remoteViews.setViewVisibility(R.id.widget_refresh_button, View.GONE);
             remoteViews.setViewVisibility(R.id.widget_refresh_button_loading, View.VISIBLE);
-            status = true;
             onUpdate(context, mgr, appWidgetIds);
         } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
             FireBaseHelper.setNewPostListener(context);
             remoteViews.setViewVisibility(R.id.widget_refresh_button, View.VISIBLE);
             remoteViews.setViewVisibility(R.id.widget_refresh_button_loading, View.GONE);
-            status = false;
-
             ComponentName cn = new ComponentName(context, PostsWidget.class);
             (AppWidgetManager.getInstance(context)).updateAppWidget(cn, remoteViews);
 

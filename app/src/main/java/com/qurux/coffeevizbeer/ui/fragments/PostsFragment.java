@@ -170,12 +170,16 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             // Create a MatrixCursor filled with the rows you want to add.
             MatrixCursor matrixCursor = new MatrixCursor(new String[]{"isAd"});
             matrixCursor.addRow(new Object[]{1});
-
             // Merge your existing cursor with the matrixCursor you created.
             MergeCursor mergeCursor = new MergeCursor(new Cursor[]{matrixCursor, data});
             adapter.swapCursor(mergeCursor);
         } else {
-            adapter.swapCursor(data);
+            // Create a MatrixCursor filled with the rows you want to add.
+            MatrixCursor matrixCursor = new MatrixCursor(new String[]{"isAd"});
+            matrixCursor.addRow(new Object[]{0});
+            // Merge your existing cursor with the matrixCursor you created.
+            MergeCursor mergeCursor = new MergeCursor(new Cursor[]{matrixCursor, data});
+            adapter.swapCursor(mergeCursor);
         }
         if (oldPosition > 0) {
             layoutManager.scrollToPosition(oldPosition);
