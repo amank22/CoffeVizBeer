@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_static_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/appwidget_text"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/appwidget_text"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/textSize_normal"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/widget_refresh_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?android:selectableItemBackground"
+        android:contentDescription="@string/desc_widget_refresh"
+        android:src="@drawable/ic_refresh" />
+
+    <FrameLayout
+        android:id="@+id/widget_refresh_button_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/ic_refresh"
+            android:progressDrawable="@drawable/ic_refresh" />
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/posts_widget_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/widget_static_text"
+        android:divider="#00000000"
+        android:dividerHeight="1dp" />
+
+</RelativeLayout>

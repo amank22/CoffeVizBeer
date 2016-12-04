@@ -22,6 +22,7 @@ import com.google.firebase.storage.UploadTask;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.bean.Post;
 import com.qurux.coffeevizbeer.local.CvBContract;
+import com.qurux.coffeevizbeer.widget.PostsWidget;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -126,8 +127,10 @@ public class FireBaseHelper {
                     ContentValues cv = createContentValue(key, value);
                     cvArray[i++] = cv;
                 }
-                if (cvArray.length > 0)
+                if (cvArray.length > 0) {
                     context.getContentResolver().bulkInsert(CvBContract.PostsEntry.CONTENT_URI, cvArray);
+                }
+                PostsWidget.sendRefreshBroadcast(context);
                 postRef.addChildEventListener(childEventListener);
             }
 
@@ -143,6 +146,7 @@ public class FireBaseHelper {
         context.getContentResolver().delete(CvBContract.PostsEntry.CONTENT_URI, CvBContract.PostsEntry.COLUMN_SERVER_ID + "=?",
                 new String[]{dataSnapshot.getKey()});
         Log.d("aman-removed", post.getTitle());
+        PostsWidget.sendRefreshBroadcast(context);
     }
 
     private static void updateSinglePostToDb(DataSnapshot dataSnapshot, Context context) {
@@ -151,6 +155,7 @@ public class FireBaseHelper {
         context.getContentResolver().update(CvBContract.PostsEntry.CONTENT_URI, cv, CvBContract.PostsEntry.COLUMN_SERVER_ID + "=?",
                 new String[]{dataSnapshot.getKey()});
         Log.d("aman-changed", post.getTitle());
+        PostsWidget.sendRefreshBroadcast(context);
     }
 
     private static void addSinglePostToDb(DataSnapshot dataSnapshot, Map<String, Post> posts, Context context) {
@@ -158,15 +163,14 @@ public class FireBaseHelper {
         if (!posts.containsKey(dataSnapshot.getKey())) {
             ContentValues cv = createContentValue(dataSnapshot.getKey(), post);
             context.getContentResolver().insert(CvBContract.PostsEntry.CONTENT_URI, cv);
+            PostsWidget.sendRefreshBroadcast(context);
         } else {
+            PostsWidget.sendRefreshBroadcast(context);
             Log.d("aman", "onChildAdded: Already in LinkedHashMap");
         }
     }
 
     private static void addRowsToMap(@NonNull Context context, Map<String, Post> posts) {
-        if (context == null) {
-            CvBUtil.log("Context Null");
-        }
         Cursor already = context.getContentResolver().query(CvBContract.PostsEntry.CONTENT_URI,
                 new String[]{CvBContract.PostsEntry.COLUMN_SERVER_ID},
                 null, null, null);

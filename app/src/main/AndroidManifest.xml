@@ -30,11 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".helper.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/title_activity_home"
@@ -68,6 +66,20 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver android:name=".widget.PostsWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/posts_widget_info" />
+        </receiver>
+        <service
+            android:name=".widget.PostsRemoteViewService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

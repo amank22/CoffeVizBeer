@@ -142,5 +142,9 @@
     <string name="error_unknown">Something happened which even i don\'t know</string>
     <string name="send_to_title">Share the vizo</string>
     <string name="desc_search">Search</string>
+    <string name="appwidget_text">Coffee Viz Beer</string>
+    <string name="add_widget">Add widget</string>
+    <string name="desc_widget_refresh">CVB Widget Refresh</string>
+    <string name="widget_please_login">Please Login to CvB</string>
 
 </resources>

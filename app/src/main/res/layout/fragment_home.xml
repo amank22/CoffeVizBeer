@@ -31,7 +31,8 @@
                     android:background="@color/colorBackground"
                     android:contentDescription="@string/app_name"
                     android:focusableInTouchMode="true"
-                    android:scaleType="centerInside" />
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/ic_vector_cvb_icon" />
 
                 <EditText
                     android:id="@+id/editTextSearch"
