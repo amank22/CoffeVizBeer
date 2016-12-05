@@ -168,7 +168,7 @@ public class TabsLayoutFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(PostsFragment.newInstance());
         adapter.addFragment(PostsFragment.newInstance(PostsFragment.ALL_BOOKMARKED_POSTS_LOADER));
-        adapter.addFragment(new AboutFragment());
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.USER_POSTS_LOADER));
         viewPager.setAdapter(adapter);
     }
 

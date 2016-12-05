@@ -99,8 +99,8 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         String color = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_COLOR));
         int liked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LIKED));
         int bookmarked = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_BOOKMARKED));
-        String[] titles = title.split(" ");
-        SpannableString spanTitle = new SpannableString(title);
+        String[] titles = title.split("::");
+        SpannableString spanTitle = new SpannableString(title.replace("::", " "));
         spanTitle.setSpan(colorSpan,
                 titles[0].length() + 1, titles[0].length() + 4, Spanned.SPAN_COMPOSING);
         holder.title.setText(spanTitle);

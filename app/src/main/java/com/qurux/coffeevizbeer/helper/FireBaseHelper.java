@@ -14,7 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -76,13 +75,11 @@ public class FireBaseHelper {
     }
 
     public static void setNewPostListener(Context context) {
-        Map<String, Post> posts = new LinkedHashMap<>();
-        addRowsToMap(context, posts);
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post");
         final ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                addSinglePostToDb(dataSnapshot, posts, context);
+                addSinglePostToDb(dataSnapshot, context);
             }
 
             @Override
@@ -106,39 +103,7 @@ public class FireBaseHelper {
 
             }
         };
-        postRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                CvBUtil.log("starting onDatachange");
-                Map<String, Post> tempPosts = new LinkedHashMap<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (!posts.containsKey(snapshot.getKey())) {
-                        Post post = snapshot.getValue(Post.class);
-                        tempPosts.put(snapshot.getKey(), post);
-                        posts.put(snapshot.getKey(), post);
-                    }
-                }
-                postRef.removeEventListener(this);
-                ContentValues[] cvArray = new ContentValues[tempPosts.size()];
-                int i = 0;
-                for (Map.Entry<String, Post> entry : tempPosts.entrySet()) {
-                    String key = entry.getKey();
-                    Post value = entry.getValue();
-                    ContentValues cv = createContentValue(key, value);
-                    cvArray[i++] = cv;
-                }
-                if (cvArray.length > 0) {
-                    context.getContentResolver().bulkInsert(CvBContract.PostsEntry.CONTENT_URI, cvArray);
-                }
-                PostsWidget.sendRefreshBroadcast(context);
-                postRef.addChildEventListener(childEventListener);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        postRef.addChildEventListener(childEventListener);
     }
 
     private static void removeSinglePostFromDb(DataSnapshot dataSnapshot, Context context) {
@@ -158,12 +123,15 @@ public class FireBaseHelper {
         PostsWidget.sendRefreshBroadcast(context);
     }
 
-    private static void addSinglePostToDb(DataSnapshot dataSnapshot, Map<String, Post> posts, Context context) {
+    private static void addSinglePostToDb(DataSnapshot dataSnapshot, Context context) {
+        Map<String, Post> posts = new LinkedHashMap<>();
+        addRowsToMap(context, posts);
         Post post = dataSnapshot.getValue(Post.class);
         if (!posts.containsKey(dataSnapshot.getKey())) {
             ContentValues cv = createContentValue(dataSnapshot.getKey(), post);
             context.getContentResolver().insert(CvBContract.PostsEntry.CONTENT_URI, cv);
             PostsWidget.sendRefreshBroadcast(context);
+            posts.put(dataSnapshot.getKey(), post);
         } else {
             PostsWidget.sendRefreshBroadcast(context);
             Log.d("aman", "onChildAdded: Already in LinkedHashMap");

@@ -22,7 +22,13 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.qurux.coffeevizbeer.R;
+import com.qurux.coffeevizbeer.bean.User;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -127,9 +133,27 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
                         Log.w(TAG, "signInWithCredential", task.getException());
                         errorText.setText(R.string.error_firebase_failed);
                     } else {
+                        addDummyUser(task.getResult().getUser().getUid());
                         handleFirebaseAuthResult(task.getResult());
                     }
                 });
+    }
+
+    private void addDummyUser(String uid) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("User");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(uid)) {
+                    userRef.child(uid).setValue(new User());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

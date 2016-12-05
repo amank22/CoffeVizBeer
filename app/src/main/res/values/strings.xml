@@ -146,5 +146,6 @@
     <string name="add_widget">Add widget</string>
     <string name="desc_widget_refresh">CVB Widget Refresh</string>
     <string name="widget_please_login">Please Login to CvB</string>
+    <string name="desc_remove_button">Go Anonymous</string>
 
 </resources>

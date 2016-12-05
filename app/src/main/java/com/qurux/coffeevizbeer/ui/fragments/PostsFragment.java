@@ -26,6 +26,8 @@ import com.qurux.coffeevizbeer.app.CvBApp;
 import com.qurux.coffeevizbeer.bean.User;
 import com.qurux.coffeevizbeer.events.ErrorEvent;
 import com.qurux.coffeevizbeer.events.SearchEvent;
+import com.qurux.coffeevizbeer.exceptions.EmptyDataException;
+import com.qurux.coffeevizbeer.exceptions.NullUserException;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.local.CvBContract;
 
@@ -148,8 +150,13 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             loader = new CursorLoader(this.getActivity(), CvBContract.PostsEntry.buildSearchUri(key), null, null, null,
                     CvBContract.PostsEntry._ID + " DESC");
         } else if (id == USER_POSTS_LOADER) {
-            loader = getUserPostsCursorLoader();
-            if (loader == null) return null;
+            try {
+                loader = getUserPostsCursorLoader();
+            } catch (NullUserException e) {
+                handleError(new ErrorEvent(ErrorEvent.ERROR_USER_LOADING));
+            } catch (EmptyDataException e) {
+                handleError(new ErrorEvent(ErrorEvent.ERROR_NO_POSTS));
+            }
         }
         return loader;
     }
@@ -193,15 +200,15 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Nullable
-    private CursorLoader getUserPostsCursorLoader() {
+    private CursorLoader getUserPostsCursorLoader() throws NullUserException, EmptyDataException {
         CursorLoader loader;
         User user = CvBApp.getInstance().getUserExtra();
         if (user == null) {
-            return null;
+            throw new NullUserException();
         }
         Map<String, Boolean> posts = user.getPosts();
         if (posts == null) {
-            return null;
+            throw new EmptyDataException();
         }
         Set<String> keys = posts.keySet();
         StringBuilder sb = new StringBuilder();

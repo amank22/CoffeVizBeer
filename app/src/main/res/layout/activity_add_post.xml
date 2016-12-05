@@ -183,6 +183,8 @@
             android:id="@+id/post_progressbar"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_below="@id/preview_post_layout"
+            android:layout_centerHorizontal="true"
             android:indeterminate="true"
             android:visibility="invisible" />
 
@@ -190,7 +192,7 @@
             android:id="@+id/button_submit_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/preview_post_layout"
+            android:layout_below="@id/post_progressbar"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:background="@drawable/button_bg"

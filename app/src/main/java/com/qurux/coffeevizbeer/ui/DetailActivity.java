@@ -1,7 +1,6 @@
 package com.qurux.coffeevizbeer.ui;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.ui.fragments.PostsDetailFragment;
@@ -13,13 +12,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         int _id = getIntent().getIntExtra(KEY_ID, -1);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(null);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
         if (_id != -1) {
             PostsDetailFragment frag = (PostsDetailFragment) getSupportFragmentManager().findFragmentByTag("Detail_frag");
             if (frag == null) {

@@ -14,7 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatDrawableManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,6 +103,12 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         share = (ImageButton) v.findViewById(R.id.button_share);
         thisThatView = (ThisThatView) v.findViewById(R.id.this_that_view_item);
         toolbarLayout = (CollapsingToolbarLayout) v.findViewById(R.id.toolbar_layout);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -147,7 +155,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         bookmark.setOnClickListener(view -> handleBookmark(serverIdText, bookmarkedInt));
         like.setOnClickListener(view -> handleLike(serverIdText, likedInt));
         share.setOnClickListener(view -> {
-            
+
             String summary = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SUMMARY));
             String title = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_TITLE));
             Intent sendIntent = new Intent();
