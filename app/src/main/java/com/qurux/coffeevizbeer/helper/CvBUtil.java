@@ -35,7 +35,7 @@ public class CvBUtil {
     /**
      * Print a log debug message with default key.
      *
-     * @param msg    String to print on debug logcat.
+     * @param msg String to print on debug logcat.
      */
     public static void log(String msg) {
         Log.d("Aman", msg);
@@ -44,7 +44,7 @@ public class CvBUtil {
     /**
      * Checks whether the device is connected to internet or not.
      *
-     * @param context    Context to get system services
+     * @param context Context to get system services
      * @return boolean   true if connected else false.
      */
     public static boolean isConnectedToInternet(Context context) {
@@ -90,7 +90,7 @@ public class CvBUtil {
      *
      * @param context    Context to pass to dialog
      * @param message    String message to show in dialog
-     * @param okListener    Ok Button Listener
+     * @param okListener Ok Button Listener
      */
     private static void showMessageOKCancel(Context context, String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(context)
@@ -105,7 +105,7 @@ public class CvBUtil {
      * Compress the file and return the compressed photo
      *
      * @param photoFile File to compress
-     * @return photoFile 
+     * @return photoFile
      */
     public static File PhotoCompressor(File photoFile) {
         Bitmap b = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
@@ -160,7 +160,7 @@ public class CvBUtil {
     /**
      * Straighten the Bitmap
      *
-     * @param bitmap Bitmap to compress
+     * @param bitmap  Bitmap to compress
      * @param absPath Absolute path of the file
      * @return photoFile
      */
@@ -193,11 +193,11 @@ public class CvBUtil {
         return bitmap;
     }
 
-     /**
+    /**
      * Checks whether the link is local.
      * Local String is of format Local:avatar{1-20}
      *
-     * @param context    Context
+     * @param context Context
      * @param link    String link of check
      * @return boolean   true if local else false.
      */
@@ -205,11 +205,11 @@ public class CvBUtil {
         return link.matches(context.getString(R.string.regex_local));
     }
 
-     /**
+    /**
      * Copy a file from source to destination.
      *
-     * @param src    Source File
-     * @param dst    Destination File
+     * @param src Source File
+     * @param dst Destination File
      */
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
@@ -225,10 +225,10 @@ public class CvBUtil {
         out.close();
     }
 
-     /**
+    /**
      * Creates a temporary file in external dir of app.
      *
-     * @param context    Context
+     * @param context Context
      * @return File temporary empty file
      */
     public static File createDestinationFile(Context context) throws IOException {

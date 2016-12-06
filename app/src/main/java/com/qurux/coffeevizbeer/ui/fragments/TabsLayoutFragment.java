@@ -40,7 +40,6 @@ import java.util.List;
 public class TabsLayoutFragment extends Fragment {
 
     private static final String KEY_TAB_CURRENT = "key_tab_current";
-    private TabLayout tabLayout;
     private ViewPager viewPager;
     private EditText searchBox;
     private int currentPos = 0;
@@ -124,7 +123,7 @@ public class TabsLayoutFragment extends Fragment {
     }
 
     private void setupTabLayout(View view) {
-        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_vector_home);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_vector_bookmark);

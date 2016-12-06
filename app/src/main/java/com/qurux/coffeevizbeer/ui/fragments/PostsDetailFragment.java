@@ -1,7 +1,6 @@
 package com.qurux.coffeevizbeer.ui.fragments;
 
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -9,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.qurux.coffeevizbeer.R;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
+import com.qurux.coffeevizbeer.helper.SharedPreferenceHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.views.ThisThatView;
 
@@ -107,7 +108,10 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            boolean isLandscapeTablet = SharedPreferenceHelper.getSharedPreferenceBoolean(getContext(),
+                    SharedPreferenceHelper.KEY_IS_LANDSCAPED_TABLET, false);
+            if (!isLandscapeTablet)
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -132,7 +136,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         likedInt = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_LIKED));
         bookmarkedInt = dataCursor.getInt(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_BOOKMARKED));
         serverIdText = dataCursor.getString(dataCursor.getColumnIndex(CvBContract.PostsEntry.COLUMN_SERVER_ID));
-        title.setText(titleText);
+        title.setText(titleText.replace("::", " "));
         author.setText(authorText);
         date.setText(dateText.split(" ")[0]);
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(getActivity(), R.drawable.ic_vector_user_black);
@@ -143,7 +147,9 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         title.setBackgroundColor(Color.parseColor(color));
         date.setBackgroundColor(Color.parseColor(color));
         toolbarLayout.setContentScrimColor(Color.parseColor(color));
-        setStatusBarColor(Color.parseColor(color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setStatusBarColor(Color.parseColor(color));
+        }
         if (bookmarkedInt == 0)
             bookmark.setImageResource(R.drawable.ic_vector_bookmark_black);
         else if (bookmarkedInt == 1)
@@ -172,7 +178,7 @@ public class PostsDetailFragment extends Fragment implements LoaderManager.Loade
         });
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private void setStatusBarColor(int color) {
         Window window = getActivity().getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:

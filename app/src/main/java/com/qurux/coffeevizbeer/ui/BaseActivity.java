@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -34,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         checkLoginStatus(mFirebaseAuth.getCurrentUser());
         setContentView(getLayoutResource());
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     protected void initGoogleClient(GoogleApiClient.OnConnectionFailedListener listener) {

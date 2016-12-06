@@ -72,7 +72,6 @@
             style="@style/textViewWithDefaultMargin"
             android:layout_marginBottom="@dimen/text_margin_half"
             android:layout_marginTop="@dimen/text_margin_half"
-            android:text="@string/large_text"
             android:textColor="@android:color/black"
             android:textSize="@dimen/textSize_normal" />
     </LinearLayout>

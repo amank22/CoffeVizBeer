@@ -1,9 +1,16 @@
 package com.qurux.coffeevizbeer.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v7.widget.AppCompatDrawableManager;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -13,6 +20,7 @@ import com.qurux.coffeevizbeer.app.CvBApp;
 import com.qurux.coffeevizbeer.events.ItemTapAdapterEvent;
 import com.qurux.coffeevizbeer.events.ItemTapEvent;
 import com.qurux.coffeevizbeer.helper.FireBaseHelper;
+import com.qurux.coffeevizbeer.helper.SharedPreferenceHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 import com.qurux.coffeevizbeer.ui.fragments.PostsDetailFragment;
 import com.qurux.coffeevizbeer.ui.fragments.TabsLayoutFragment;
@@ -24,8 +32,9 @@ public class HomeActivity extends BaseActivity {
 
     private static final String tag = "tabLayout";
     //TODO: Handle cases for tablets also.
-    boolean isTablet = false;
+    boolean isLandscapeTablet = false;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private TextView emptyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +45,17 @@ public class HomeActivity extends BaseActivity {
 //        Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
 //        startActivity(dbmanager);
         FrameLayout detailContainer = (FrameLayout) findViewById(R.id.container_details);
-        isTablet = detailContainer != null;
+        isLandscapeTablet = detailContainer != null;
+        SharedPreferenceHelper.setSharedPreferenceBoolean(this, SharedPreferenceHelper.KEY_IS_LANDSCAPED_TABLET, isLandscapeTablet);
+        if (!SharedPreferenceHelper.isKeyExists(this, SharedPreferenceHelper.KEY_IS_TABLET)) {
+            boolean isTablet = findViewById(R.id.is_tablet) != null;
+            SharedPreferenceHelper.setSharedPreferenceBoolean(this, SharedPreferenceHelper.KEY_IS_TABLET, isTablet);
+        }
+        if (isLandscapeTablet) {
+            emptyTextView = (TextView) findViewById(R.id.text_empty_description);
+            Drawable top = AppCompatDrawableManager.get().getDrawable(this, R.drawable.ic_vector_cvb_icon);
+            emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, top, null, null);
+        }
         TabsLayoutFragment fragmentByTag = (TabsLayoutFragment) getSupportFragmentManager().findFragmentByTag(tag);
         if (fragmentByTag == null) {
             fragmentByTag = new TabsLayoutFragment();
@@ -87,13 +106,23 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void handleReadMore(int id) {
-        if (!isTablet) {
+        if (!isLandscapeTablet) {
             Intent i = new Intent(this, DetailActivity.class);
             i.putExtra(DetailActivity.KEY_ID, id);
             startActivity(i);
         } else {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_details, PostsDetailFragment.newInstance(id)).commit();
+            emptyTextView.animate().alpha(0).scaleX(0).scaleY(0).setInterpolator(new FastOutSlowInInterpolator())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            emptyTextView.setVisibility(View.GONE);
+                            getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                                            android.R.anim.fade_in, android.R.anim.fade_out)
+                                    .replace(R.id.container_details, PostsDetailFragment.newInstance(id)).commit();
+                        }
+                    }).start();
         }
     }
 

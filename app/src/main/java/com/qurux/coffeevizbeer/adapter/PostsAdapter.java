@@ -131,7 +131,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.thisThatView.removeImage(0);
             int localPos = Character.getNumericValue(linkThis.charAt(linkThis.length() - 2)) * 10 +
                     Character.getNumericValue(linkThis.charAt(linkThis.length() - 1));
-            CvBUtil.log("local position OF " + linkThis + ":" + String.valueOf(localPos));
+//            CvBUtil.log("local position OF " + linkThis + ":" + String.valueOf(localPos));
             holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
         } else {
             holder.thisThatView.getHolder().get(0).getHierarchy().setPlaceholderImage(R.drawable.circle_blue);
@@ -140,7 +140,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (linkThat.matches(regex)) {
             int localPos = Character.getNumericValue(linkThat.charAt(linkThat.length() - 2)) * 10 +
                     Character.getNumericValue(linkThat.charAt(linkThat.length() - 1));
-            CvBUtil.log("local position OF THAT  " + linkThat + ":" + String.valueOf(localPos));
+//            CvBUtil.log("local position OF THAT  " + linkThat + ":" + String.valueOf(localPos));
             holder.thisThatView.removeImage(1);
             holder.thisThatView.getHolder().get(1).getHierarchy().setPlaceholderImage(CvBUtil.getAvatarResId(localPos));
         } else {

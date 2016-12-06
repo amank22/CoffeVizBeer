@@ -29,6 +29,7 @@ import com.qurux.coffeevizbeer.events.SearchEvent;
 import com.qurux.coffeevizbeer.exceptions.EmptyDataException;
 import com.qurux.coffeevizbeer.exceptions.NullUserException;
 import com.qurux.coffeevizbeer.helper.CvBUtil;
+import com.qurux.coffeevizbeer.helper.SharedPreferenceHelper;
 import com.qurux.coffeevizbeer.local.CvBContract;
 
 import org.greenrobot.eventbus.EventBus;
@@ -104,7 +105,12 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
         handleError(new ErrorEvent(ErrorEvent.LOADING));
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.posts_recyclerView);
         recyclerView.setHasFixedSize(true);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        boolean isLandscapeTablet = SharedPreferenceHelper.getSharedPreferenceBoolean(getContext(),
+                SharedPreferenceHelper.KEY_IS_LANDSCAPED_TABLET, false);
+        boolean isTablet = SharedPreferenceHelper.getSharedPreferenceBoolean(getContext(),
+                SharedPreferenceHelper.KEY_IS_TABLET, false);
+        if ((getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && !isTablet)
+                || (isTablet && !isLandscapeTablet)) {
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
         } else {
@@ -153,8 +159,16 @@ public class PostsFragment extends Fragment implements LoaderManager.LoaderCallb
             try {
                 loader = getUserPostsCursorLoader();
             } catch (NullUserException e) {
+                // Create a MatrixCursor filled with the rows you want to add.
+                MatrixCursor matrixCursor = new MatrixCursor(new String[]{"isAd"});
+                matrixCursor.addRow(new Object[]{0});
+                adapter.swapCursor(matrixCursor);
                 handleError(new ErrorEvent(ErrorEvent.ERROR_USER_LOADING));
             } catch (EmptyDataException e) {
+                // Create a MatrixCursor filled with the rows you want to add.
+                MatrixCursor matrixCursor = new MatrixCursor(new String[]{"isAd"});
+                matrixCursor.addRow(new Object[]{0});
+                adapter.swapCursor(matrixCursor);
                 handleError(new ErrorEvent(ErrorEvent.ERROR_NO_POSTS));
             }
         }
