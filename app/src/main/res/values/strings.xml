@@ -51,6 +51,10 @@
     <string name="ad_app_id" translatable="false">ca-app-pub-3437446276278564~7416431938</string>
     <string name="firebase_storage_link" translatable="false">gs://coffee-viz-beer-da0f5.appspot.com</string>
 
+
+    <string name="test_device_id" translatable="false">ENTER_YOUR_TEST_DEVICE_ID</string>
+
+
     <string name="regex_local" translatable="false">Local:avatar[0-9]{1,2}</string>
     <string name="avatar_local_link_start" translatable="false">Local:avatar%d</string>
 

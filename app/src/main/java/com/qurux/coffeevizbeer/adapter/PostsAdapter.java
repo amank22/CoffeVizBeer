@@ -47,7 +47,8 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.context = context;
         colorSpan = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
         authorDrawable = AppCompatDrawableManager.get().getDrawable(context, R.drawable.ic_vector_user_black);
-        adRequest = new AdRequest.Builder().addTestDevice("E901FC2269CA7A95D88D69E1B1C7B767").build();
+        String testDeviceId = context.getString(R.string.test_device_id);
+        adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
     }
 
     @Override

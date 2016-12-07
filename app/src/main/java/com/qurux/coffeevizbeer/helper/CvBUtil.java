@@ -32,6 +32,8 @@ import java.io.OutputStream;
 
 public class CvBUtil {
 
+    private final String testDeviceId = "E901FC2269CA7A95D88D69E1B1C7B767";
+
     /**
      * Print a log debug message with default key.
      *

@@ -17,3 +17,9 @@ You might share some of stories where you became friend with a person who is out
 league.
 User can find really interesting stories and combinations.
 
+##How to add test device for Ads?
+1. Go to string.xml in resources.
+2. Find string with id "test_device_id"
+3. Run the app in debug mode once to find your device id in logcat.
+   Find "Ads: Use AdRequest.Builder.addTestDevice("YOUR_DEVICE_ID") to get test ads on this device." like this in logcat.
+3. Replace the device id to get test ads.
