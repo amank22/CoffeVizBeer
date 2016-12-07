@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:autofit="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -23,50 +22,35 @@
     <me.grantland.widget.AutofitTextView
         android:id="@+id/text_login_title"
         style="@style/CustomStrongFont"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView_login_logo"
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:text="@string/app_name"
         android:textSize="60sp"
         autofit:minTextSize="24sp" />
 
-    <View
-        android:id="@+id/center_login"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerInParent="true" />
-
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/text_login_subtitle"
         style="@style/TextAppearance.AppCompat.grey.light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/text_login_title"
+        android:layout_alignRight="@id/text_login_title"
         android:layout_below="@id/text_login_title"
-        android:layout_marginLeft="@dimen/negative_margin"
-        android:layout_marginStart="@dimen/negative_margin"
-        android:layout_toEndOf="@id/center_login"
-        android:layout_toRightOf="@id/center_login"
         android:gravity="end"
         android:maxLines="1"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:text="@string/app_subtitle"
-        android:textSize="50sp"
-        autofit:minTextSize="12sp" />
+        android:textSize="@dimen/textSize_large" />
 
     <RelativeLayout
-        android:id="@+id/login_message_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/text_login_subtitle"
         android:layout_marginBottom="@dimen/negative_vertical_margin"
         android:layout_marginTop="@dimen/login_logo_top_margin"
-        android:background="@android:drawable/dialog_holo_light_frame"
         android:gravity="center">
 
         <com.google.android.gms.common.SignInButton

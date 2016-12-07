@@ -15,10 +15,6 @@
         <item name="fontPath">fonts/CharisSILB.ttf</item>
     </style>
 
-    <style name="CustomNormalFont">
-        <item name="fontPath">fonts/CharisSILR.ttf</item>
-    </style>
-
     <style name="TextAppearance.AppCompat.grey">
         <item name="android:textColor">@color/colorTextGrey</item>
     </style>

@@ -66,7 +66,7 @@ public class PostsRemoteViewService extends RemoteViewsService {
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_item);
                 // Bind data to the views
                 views.setTextViewText(R.id.widget_title, data.getString(data.getColumnIndex
-                        (CvBContract.PostsEntry.COLUMN_TITLE)));
+                        (CvBContract.PostsEntry.COLUMN_TITLE)).replace("::", " "));
                 views.setTextViewText(R.id.widget_author, data.getString(data.getColumnIndex
                         (CvBContract.PostsEntry.COLUMN_AUTHOR)));
                 views.setTextViewText(R.id.widget_summary, data.getString(data.getColumnIndex
