@@ -6,52 +6,66 @@
     android:id="@+id/login_base"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg_potrait"
+    android:background="@drawable/login_bg_landscape"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.qurux.coffeevizbeer.ui.LoginActivity">
 
-    <ImageView
-        android:id="@+id/imageView_login_logo"
-        android:layout_width="@dimen/app_logo_size"
-        android:layout_height="@dimen/app_logo_size"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/login_logo_top_margin"
-        android:contentDescription="@string/desc_cvb_logo"
-        app:srcCompat="@drawable/ic_vector_cvb_icon" />
-
-    <me.grantland.widget.AutofitTextView
-        android:id="@+id/text_login_title"
-        style="@style/CustomStrongFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageView_login_logo"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/app_name"
-        android:textSize="60sp"
-        autofit:minTextSize="24sp" />
-
-    <TextView
-        android:id="@+id/text_login_subtitle"
-        style="@style/TextAppearance.AppCompat.grey.light"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/text_login_title"
-        android:layout_alignRight="@id/text_login_title"
-        android:layout_below="@id/text_login_title"
-        android:gravity="end"
-        android:maxLines="1"
-        android:text="@string/app_subtitle"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/textSize_large" />
+    <View
+        android:id="@+id/center_land_login"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/text_login_subtitle">
+        android:layout_toLeftOf="@id/center_land_login"
+        android:layout_toStartOf="@id/center_land_login">
+
+        <ImageView
+            android:id="@+id/imageView_login_logo"
+            android:layout_width="@dimen/app_logo_size"
+            android:layout_height="@dimen/app_logo_size"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/login_logo_top_margin"
+            android:contentDescription="@string/desc_cvb_logo"
+            app:srcCompat="@drawable/ic_vector_cvb_icon" />
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/text_login_title"
+            style="@style/CustomStrongFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageView_login_logo"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textSize="60sp"
+            autofit:minTextSize="24sp" />
+
+        <TextView
+            android:id="@+id/text_login_subtitle"
+            style="@style/TextAppearance.AppCompat.grey.light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/text_login_title"
+            android:layout_alignRight="@id/text_login_title"
+            android:layout_below="@id/text_login_title"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text="@string/app_subtitle"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textSize_large" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/center_land_login"
+        android:layout_toRightOf="@id/center_land_login">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

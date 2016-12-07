@@ -48,7 +48,6 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         SignInButton mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         errorText = (TextView) findViewById(R.id.login_error_text);
         loader = (ProgressBar) findViewById(R.id.login_loader);
-
         // Set click listeners
         mSignInButton.setOnClickListener(this);
     }
@@ -64,7 +63,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         SpannableString span = new SpannableString(getString(R.string.app_name));
         span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorPrimary))
                 , 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorTextGrey))
+        span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorWhite))
                 , 7, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
                 , 11, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
