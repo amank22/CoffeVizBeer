@@ -7,6 +7,6 @@ package com.qurux.coffeevizbeer.exceptions;
 public class NullUserException extends Exception {
 
     public NullUserException() {
-        super("Your details are is not loaded");
+        super("Your details are not loaded yet");
     }
 }
